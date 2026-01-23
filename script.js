@@ -80,10 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // Inicializa o fundo generativo (Lumen Weave)
-    initLumenWeaveBackground();
+    initLiquidInkBackground();
 });
 
-function initLumenWeaveBackground() {
+function initLiquidInkBackground() {
     const canvas = document.getElementById('bg-canvas');
     if (!canvas) return;
 
@@ -93,113 +93,94 @@ function initLumenWeaveBackground() {
     const reduceMotionMq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     let reduceMotion = Boolean(reduceMotionMq && reduceMotionMq.matches);
 
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const mix = (a, b, t) => a + (b - a) * t;
+
+    // Paleta (cores da marca)
+    const C0 = { r: 10, g: 10, b: 15 }; // fundo
+    const C1 = { r: 99, g: 102, b: 241 }; // primary
+    const C2 = { r: 139, g: 92, b: 246 }; // secondary
+    const C3 = { r: 6, g: 182, b: 212 }; // accent
+
     const state = {
         w: 0,
         h: 0,
         dpr: 1,
-        minDim: 1,
-        tLast: 0,
         running: true,
+        tLast: 0,
         pointerX: 0,
         pointerY: 0,
         pointerActive: false,
-        pointerVX: 0,
-        pointerVY: 0,
-        baseHue: 215,
-        particles: [],
-        bursts: []
+        pointerSpeed: 0,
+        simW: 0,
+        simH: 0,
+        u0: null,
+        v0: null,
+        u1: null,
+        v1: null,
+        off: null,
+        offCtx: null,
+        img: null
     };
 
-    function clamp(v, a, b) {
-        return Math.max(a, Math.min(b, v));
-    }
-
-    function lerp(a, b, t) {
-        return a + (b - a) * t;
-    }
-
-    // Hash determinístico para (i, j) -> [0, 1)
-    function hash2(i, j) {
-        let n = (i * 374761393 + j * 668265263) | 0;
-        n = (n ^ (n >>> 13)) | 0;
-        n = Math.imul(n, 1274126177) | 0;
-        n = (n ^ (n >>> 16)) >>> 0;
-        return n / 4294967296;
-    }
-
-    function fade(t) {
-        // 6t^5 - 15t^4 + 10t^3
-        return t * t * t * (t * (t * 6 - 15) + 10);
-    }
-
-    function noise2(x, y) {
-        const xi = Math.floor(x);
-        const yi = Math.floor(y);
-        const xf = x - xi;
-        const yf = y - yi;
-
-        const u = fade(xf);
-        const v = fade(yf);
-
-        const n00 = hash2(xi, yi);
-        const n10 = hash2(xi + 1, yi);
-        const n01 = hash2(xi, yi + 1);
-        const n11 = hash2(xi + 1, yi + 1);
-
-        const x1 = lerp(n00, n10, u);
-        const x2 = lerp(n01, n11, u);
-        return lerp(x1, x2, v);
-    }
-
-    function fbm2(x, y) {
-        let sum = 0;
-        let amp = 0.55;
-        let freq = 1.0;
-        for (let o = 0; o < 5; o++) {
-            sum += amp * noise2(x * freq, y * freq);
-            freq *= 2.0;
-            amp *= 0.5;
+    function palette(t) {
+        // t em [0,1] -> gradiente (C1 -> C2 -> C3), com base no fundo
+        const tt = clamp(t, 0, 1);
+        let a, b, k;
+        if (tt < 0.5) {
+            a = C1;
+            b = C2;
+            k = tt * 2;
+        } else {
+            a = C2;
+            b = C3;
+            k = (tt - 0.5) * 2;
         }
-        return sum;
+        const r = mix(a.r, b.r, k);
+        const g = mix(a.g, b.g, k);
+        const bch = mix(a.b, b.b, k);
+        // mistura leve com o fundo pra ficar “ink in water”
+        const base = 0.18;
+        return {
+            r: mix(C0.r, r, 1 - base),
+            g: mix(C0.g, g, 1 - base),
+            b: mix(C0.b, bch, 1 - base)
+        };
     }
 
-    function curl2(x, y) {
-        // Derivadas numéricas do fbm
-        const e = 0.015;
-        const n1 = fbm2(x + e, y);
-        const n2 = fbm2(x - e, y);
-        const a = (n1 - n2) / (2 * e);
+    function seedInk() {
+        const { simW: w, simH: h } = state;
+        const u0 = state.u0;
+        const v0 = state.v0;
+        if (!u0 || !v0) return;
 
-        const n3 = fbm2(x, y + e);
-        const n4 = fbm2(x, y - e);
-        const b = (n3 - n4) / (2 * e);
+        u0.fill(1);
+        v0.fill(0);
 
-        // Campo sem divergência (rotaciona gradiente)
-        let vx = b;
-        let vy = -a;
-        const m = Math.hypot(vx, vy) || 1;
-        vx /= m;
-        vy /= m;
-        return { vx, vy };
-    }
-
-    function makeParticles(count) {
-        const arr = new Array(count);
-        for (let i = 0; i < count; i++) {
-            arr[i] = {
-                x: Math.random() * state.w,
-                y: Math.random() * state.h,
-                px: 0,
-                py: 0,
-                vx: (Math.random() - 0.5) * 0.2,
-                vy: (Math.random() - 0.5) * 0.2,
-                hue: (Math.random() * 160) - 80,
-                life: Math.random() * 1.0
-            };
-            arr[i].px = arr[i].x;
-            arr[i].py = arr[i].y;
+        // ruído inicial sutil
+        for (let i = 0; i < v0.length; i++) {
+            v0[i] = (Math.random() - 0.5) * 0.002;
         }
-        return arr;
+
+        // alguns “pontos” de tinta
+        const spots = reduceMotion ? 2 : 4;
+        for (let s = 0; s < spots; s++) {
+            const cx = Math.floor(w * (0.25 + Math.random() * 0.5));
+            const cy = Math.floor(h * (0.25 + Math.random() * 0.5));
+            const rad = Math.floor(Math.min(w, h) * (reduceMotion ? 0.045 : 0.06));
+            for (let y = -rad; y <= rad; y++) {
+                const yy = cy + y;
+                if (yy < 1 || yy >= h - 1) continue;
+                for (let x = -rad; x <= rad; x++) {
+                    const xx = cx + x;
+                    if (xx < 1 || xx >= w - 1) continue;
+                    if (x * x + y * y > rad * rad) continue;
+                    const idx = xx + yy * w;
+                    v0[idx] = 0.85;
+                    u0[idx] = 0.15;
+                }
+            }
+        }
     }
 
     function resize() {
@@ -210,171 +191,241 @@ function initLumenWeaveBackground() {
         state.dpr = clamp(window.devicePixelRatio || 1, 1, 2);
         state.w = cssW;
         state.h = cssH;
-        state.minDim = Math.max(1, Math.min(cssW, cssH));
 
         canvas.width = Math.floor(cssW * state.dpr);
         canvas.height = Math.floor(cssH * state.dpr);
         ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        ctx.imageSmoothingEnabled = true;
 
-        const area = cssW * cssH;
-        const base = Math.floor(area / (reduceMotion ? 9000 : 4500));
-        const count = clamp(base, reduceMotion ? 220 : 700, reduceMotion ? 420 : 1600);
-        state.particles = makeParticles(count);
+        // Simulação em baixa resolução (performance)
+        const maxW = reduceMotion ? 260 : 380;
+        const minW = 180;
+        const targetW = clamp(Math.floor(cssW / (reduceMotion ? 4.8 : 3.2)), minW, maxW);
+        const targetH = Math.max(120, Math.floor(targetW * (cssH / cssW)));
 
-        // Limpa com um “preto” suave
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(10, 10, 15, 1)';
-        ctx.fillRect(0, 0, state.w, state.h);
+        state.simW = targetW;
+        state.simH = targetH;
+
+        state.u0 = new Float32Array(targetW * targetH);
+        state.v0 = new Float32Array(targetW * targetH);
+        state.u1 = new Float32Array(targetW * targetH);
+        state.v1 = new Float32Array(targetW * targetH);
+
+        state.off = document.createElement('canvas');
+        state.off.width = targetW;
+        state.off.height = targetH;
+        state.offCtx = state.off.getContext('2d', { alpha: true });
+        state.img = state.offCtx.createImageData(targetW, targetH);
+
+        seedInk();
     }
 
-    function setPointer(x, y, active, vx, vy) {
-        state.pointerX = x;
-        state.pointerY = y;
-        state.pointerActive = active;
-        state.pointerVX = vx || 0;
-        state.pointerVY = vy || 0;
-    }
+    function sampleBilinear(field, x, y, w, h) {
+        // clamp nas bordas
+        const xx = clamp(x, 0, w - 1);
+        const yy = clamp(y, 0, h - 1);
+        const x0 = xx | 0;
+        const y0 = yy | 0;
+        const x1 = x0 < w - 1 ? x0 + 1 : x0;
+        const y1 = y0 < h - 1 ? y0 + 1 : y0;
+        const tx = xx - x0;
+        const ty = yy - y0;
 
-    function burst(x, y) {
-        const hue = (state.baseHue + 40 + Math.random() * 80) % 360;
-        state.bursts.push({
-            x,
-            y,
-            r: 0,
-            hue,
-            life: 1
-        });
-        if (state.bursts.length > 6) state.bursts.shift();
-    }
+        const i00 = x0 + y0 * w;
+        const i10 = x1 + y0 * w;
+        const i01 = x0 + y1 * w;
+        const i11 = x1 + y1 * w;
 
-    function drawBursts(dt) {
-        if (!state.bursts.length) return;
-        for (let i = state.bursts.length - 1; i >= 0; i--) {
-            const b = state.bursts[i];
-            b.life -= dt * 1.2;
-            b.r += dt * state.minDim * 0.9;
-            if (b.life <= 0) {
-                state.bursts.splice(i, 1);
-                continue;
-            }
+        const a = field[i00];
+        const b = field[i10];
+        const c = field[i01];
+        const d = field[i11];
 
-            const alpha = b.life * 0.22;
-            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-            g.addColorStop(0, `hsla(${b.hue}, 95%, 70%, ${alpha})`);
-            g.addColorStop(0.35, `hsla(${b.hue + 30}, 95%, 60%, ${alpha * 0.6})`);
-            g.addColorStop(1, 'rgba(0,0,0,0)');
-
-            ctx.globalCompositeOperation = 'lighter';
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function drawGrain(amount) {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.018)';
-        for (let i = 0; i < amount; i++) {
-            const x = Math.random() * state.w;
-            const y = Math.random() * state.h;
-            ctx.fillRect(x, y, 1, 1);
-        }
+        const ab = a + (b - a) * tx;
+        const cd = c + (d - c) * tx;
+        return ab + (cd - ab) * ty;
     }
 
     function tick(ts) {
         if (!state.running) return;
 
-        const fpsCap = reduceMotion ? 12 : 60;
+        const fpsCap = reduceMotion ? 12 : 45;
         const minFrameMs = 1000 / fpsCap;
         if (state.tLast && ts - state.tLast < minFrameMs * 0.92) {
             requestAnimationFrame(tick);
             return;
         }
 
-        const dt = state.tLast ? Math.min(0.033, (ts - state.tLast) / 1000) : 1 / fpsCap;
+        const dt = state.tLast ? Math.min(0.05, (ts - state.tLast) / 1000) : 1 / fpsCap;
         state.tLast = ts;
 
-        // Fundo “trailing”
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = reduceMotion ? 'rgba(10, 10, 15, 0.28)' : 'rgba(10, 10, 15, 0.085)';
-        ctx.fillRect(0, 0, state.w, state.h);
+        const w = state.simW;
+        const h = state.simH;
+        let uRead = state.u0;
+        let vRead = state.v0;
+        let uWrite = state.u1;
+        let vWrite = state.v1;
 
-        const t = ts * 0.00008;
-        state.baseHue = (215 + ts * 0.003) % 360;
+        if (!w || !h || !uRead || !vRead || !uWrite || !vWrite) {
+            requestAnimationFrame(tick);
+            return;
+        }
 
-        const fieldScale = 2.2;
-        const fieldStrength = reduceMotion ? 0.42 : 0.7;
-        const friction = reduceMotion ? 0.88 : 0.84;
-        const speed = reduceMotion ? 0.75 : 1.15;
+        // Gray-Scott + advecção simples (“tinta líquida”)
+        const Du = 0.16;
+        const Dv = 0.08;
+        const F0 = 0.035;
+        const K0 = 0.062;
 
-        const radius = state.minDim * 0.32;
-        const swirl = 0.55 * clamp((Math.hypot(state.pointerVX, state.pointerVY) / 1400), 0, 1);
+        const steps = reduceMotion ? 1 : 2;
+        const advect = (reduceMotion ? 0.55 : 0.85) * 18 * dt; // “força” do fluxo
+        const flow = reduceMotion ? 0.8 : 1.25;
+        const t = ts * 0.00025;
 
-        ctx.globalCompositeOperation = 'lighter';
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = reduceMotion ? 1.0 : 1.15;
+        const px = (state.pointerX / Math.max(1, state.w)) * w;
+        const py = (state.pointerY / Math.max(1, state.h)) * h;
+        const brushR = (reduceMotion ? 10 : 14) + clamp(state.pointerSpeed * 0.004, 0, 22);
+        const brushR2 = brushR * brushR;
+        const brushInk = reduceMotion ? 0.12 : 0.18;
 
-        for (let i = 0; i < state.particles.length; i++) {
-            const p = state.particles[i];
-            p.px = p.x;
-            p.py = p.y;
+        for (let s = 0; s < steps; s++) {
+            for (let y = 0; y < h; y++) {
+                const yW = y * w;
+                const yN = (y > 0 ? (y - 1) : y) * w;
+                const yS = (y < h - 1 ? (y + 1) : y) * w;
 
-            const sx = (p.x - state.w * 0.5) / state.minDim;
-            const sy = (p.y - state.h * 0.5) / state.minDim;
-            const c = curl2(sx * fieldScale + t, sy * fieldScale - t * 0.9);
+                const ny = (y / Math.max(1, h)) - 0.5;
+                for (let x = 0; x < w; x++) {
+                    const idx = x + yW;
 
-            p.vx = p.vx * friction + c.vx * fieldStrength;
-            p.vy = p.vy * friction + c.vy * fieldStrength;
+                    const xW = x > 0 ? x - 1 : x;
+                    const xE = x < w - 1 ? x + 1 : x;
 
-            if (state.pointerActive) {
-                const dx = p.x - state.pointerX;
-                const dy = p.y - state.pointerY;
-                const dist = Math.hypot(dx, dy) + 0.001;
-                const k = clamp(1 - dist / radius, 0, 1);
-                if (k > 0) {
-                    // “lente gravitacional”: puxa e faz girar perto do cursor
-                    const ax = (-dx / dist) * (0.22 * k);
-                    const ay = (-dy / dist) * (0.22 * k);
-                    const tx = (-dy / dist) * (0.35 * k * (0.35 + swirl));
-                    const ty = (dx / dist) * (0.35 * k * (0.35 + swirl));
-                    p.vx += ax + tx;
-                    p.vy += ay + ty;
+                    // Laplaciano (9 amostras)
+                    const uC = uRead[idx];
+                    const vC = vRead[idx];
+
+                    const uLap =
+                        -uC +
+                        0.2 * (uRead[x + yN] + uRead[x + yS] + uRead[xW + yW] + uRead[xE + yW]) +
+                        0.05 * (uRead[xW + yN] + uRead[xE + yN] + uRead[xW + yS] + uRead[xE + yS]);
+
+                    const vLap =
+                        -vC +
+                        0.2 * (vRead[x + yN] + vRead[x + yS] + vRead[xW + yW] + vRead[xE + yW]) +
+                        0.05 * (vRead[xW + yN] + vRead[xE + yN] + vRead[xW + yS] + vRead[xE + yS]);
+
+                    // Campo de fluxo barato (trig) + toque do cursor (swirl)
+                    const nx = (x / Math.max(1, w)) - 0.5;
+                    const a = Math.sin((nx * 3.4 + t) * 2.0) + Math.cos((ny * 4.1 - t) * 1.7);
+                    let vx = Math.cos(a * 2.1) * flow;
+                    let vy = Math.sin(a * 1.9) * flow;
+
+                    if (state.pointerActive) {
+                        const dx = x - px;
+                        const dy = y - py;
+                        const d2 = dx * dx + dy * dy;
+                        const k = d2 < brushR2 ? (1 - d2 / brushR2) : 0;
+                        if (k > 0) {
+                            // rotação em torno do cursor (vórtice)
+                            const inv = 1 / (Math.sqrt(d2) + 0.001);
+                            vx += (-dy * inv) * (2.2 * k);
+                            vy += (dx * inv) * (2.2 * k);
+                        }
+                    }
+
+                    // Advecção só do “dye” (v)
+                    const vA = sampleBilinear(vRead, x - vx * advect, y - vy * advect, w, h);
+
+                    // Pequena variação lenta do feed/kill (parece mais “orgânico”)
+                    const F = F0 + 0.006 * Math.sin((nx + t) * 2.2) * Math.cos((ny - t) * 1.7);
+                    const K = K0 + 0.004 * Math.cos((nx - t) * 2.0);
+
+                    const uvv = uC * vA * vA;
+                    let u = uC + (Du * uLap - uvv + F * (1 - uC)) * 1.15;
+                    let v = vA + (Dv * vLap + uvv - (F + K) * vA) * 1.15;
+
+                    // Injeção de tinta no ponteiro
+                    if (state.pointerActive) {
+                        const dx = x - px;
+                        const dy = y - py;
+                        const d2 = dx * dx + dy * dy;
+                        if (d2 < brushR2) {
+                            const k = (1 - d2 / brushR2);
+                            v = clamp(v + brushInk * k, 0, 1);
+                            u = clamp(u - 0.12 * k, 0, 1);
+                        }
+                    }
+
+                    uWrite[idx] = clamp(u, 0, 1);
+                    vWrite[idx] = clamp(v, 0, 1);
                 }
             }
 
-            p.x += p.vx * (speed * 60 * dt);
-            p.y += p.vy * (speed * 60 * dt);
-
-            // Reposiciona suavemente se sair da tela
-            const m = 40;
-            if (p.x < -m || p.x > state.w + m || p.y < -m || p.y > state.h + m) {
-                p.x = Math.random() * state.w;
-                p.y = Math.random() * state.h;
-                p.px = p.x;
-                p.py = p.y;
-                p.vx = (Math.random() - 0.5) * 0.2;
-                p.vy = (Math.random() - 0.5) * 0.2;
-                p.life = 0;
-                continue;
-            }
-
-            p.life = clamp(p.life + dt * 0.35, 0, 1);
-
-            const vMag = Math.hypot(p.vx, p.vy);
-            const hue = (state.baseHue + p.hue + vMag * 18) % 360;
-            const alpha = (reduceMotion ? 0.22 : 0.18) * p.life;
-            ctx.strokeStyle = `hsla(${hue}, 92%, 66%, ${alpha})`;
-
-            ctx.beginPath();
-            ctx.moveTo(p.px, p.py);
-            ctx.lineTo(p.x, p.y);
-            ctx.stroke();
+            // Ping-pong (local)
+            const tu = uRead;
+            uRead = uWrite;
+            uWrite = tu;
+            const tv = vRead;
+            vRead = vWrite;
+            vWrite = tv;
         }
 
-        drawBursts(dt);
-        drawGrain(reduceMotion ? 35 : 120);
+        // Persistir buffers finais no state
+        state.u0 = uRead;
+        state.v0 = vRead;
+        state.u1 = uWrite;
+        state.v1 = vWrite;
+
+        // Render: sim -> offscreen -> canvas (com glow)
+        const offCtx = state.offCtx;
+        const img = state.img;
+        const data = img.data;
+        const v = state.v0;
+
+        for (let i = 0, p = 0; i < v.length; i++, p += 4) {
+            // “tinta”: realça valores médios (fica mais líquido)
+            const ink = clamp(Math.pow(clamp(v[i] * 1.35, 0, 1), 0.72), 0, 1);
+            const col = palette(ink);
+            const a = clamp(ink * 1.25, 0, 1);
+
+            data[p] = col.r * a;
+            data[p + 1] = col.g * a;
+            data[p + 2] = col.b * a;
+            data[p + 3] = clamp(255 * a, 0, 255);
+        }
+
+        offCtx.putImageData(img, 0, 0);
+
+        ctx.clearRect(0, 0, state.w, state.h);
+
+        // Glow suave
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.filter = reduceMotion ? 'blur(8px) saturate(130%)' : 'blur(14px) saturate(150%)';
+        ctx.globalAlpha = reduceMotion ? 0.7 : 0.85;
+        ctx.drawImage(state.off, 0, 0, state.w, state.h);
+        ctx.restore();
+
+        // Pass principal
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.filter = 'none';
+        ctx.globalAlpha = 0.95;
+        ctx.drawImage(state.off, 0, 0, state.w, state.h);
+        ctx.restore();
+
+        // Grain bem sutil (textura)
+        if (!reduceMotion) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.globalAlpha = 0.06;
+            ctx.fillStyle = 'rgba(255,255,255,0.08)';
+            for (let i = 0; i < 80; i++) {
+                ctx.fillRect(Math.random() * state.w, Math.random() * state.h, 1, 1);
+            }
+            ctx.restore();
+        }
 
         requestAnimationFrame(tick);
     }
@@ -388,10 +439,11 @@ function initLumenWeaveBackground() {
         }
     }
 
-    // Eventos
+    // Eventos de ponteiro (mouse/toque)
     let lastPX = 0;
     let lastPY = 0;
     let lastPT = 0;
+
     window.addEventListener(
         'pointermove',
         (e) => {
@@ -399,30 +451,38 @@ function initLumenWeaveBackground() {
             const dx = e.clientX - lastPX;
             const dy = e.clientY - lastPY;
             const dt = Math.max(1, now - lastPT);
-            const vx = (dx / dt) * 1000;
-            const vy = (dy / dt) * 1000;
             lastPX = e.clientX;
             lastPY = e.clientY;
             lastPT = now;
-            setPointer(e.clientX, e.clientY, true, vx, vy);
+
+            state.pointerX = e.clientX;
+            state.pointerY = e.clientY;
+            state.pointerActive = true;
+            state.pointerSpeed = Math.hypot(dx, dy) / dt * 1000;
         },
         { passive: true }
     );
+
     window.addEventListener(
         'pointerdown',
         (e) => {
-            setPointer(e.clientX, e.clientY, true, state.pointerVX, state.pointerVY);
-            burst(e.clientX, e.clientY);
+            state.pointerX = e.clientX;
+            state.pointerY = e.clientY;
+            state.pointerActive = true;
+            state.pointerSpeed = Math.max(state.pointerSpeed, 900);
         },
         { passive: true }
     );
+
     window.addEventListener(
         'pointerleave',
         () => {
-            setPointer(state.pointerX, state.pointerY, false, 0, 0);
+            state.pointerActive = false;
+            state.pointerSpeed = 0;
         },
         { passive: true }
     );
+
     window.addEventListener('resize', () => resize(), { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
