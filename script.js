@@ -193,6 +193,8 @@ function initMinecraftBackground() {
         clouds: [],
         breakFx: [],
         broken: new Set(),
+        placed: new Map(), // blocos colocados: key -> tipo de bloco
+        selectedBlock: 'DIRT', // bloco selecionado para colocar
         renderBaseCol: 0,
         renderXOffset: 0,
         renderRows: 0,
@@ -308,6 +310,64 @@ function initMinecraftBackground() {
 
     function isBroken(worldCol, by) {
         return state.broken.has(blockKey(worldCol, by));
+    }
+
+    // Verifica se uma coluna tem uma árvore (ignora treeCooldown para simplificar)
+    function getTreeInfo(treeCol, rows, seaRowFromTop) {
+        const surfBlockY = terrainSurfaceBlocks(treeCol, rows, seaRowFromTop);
+        if (surfBlockY > seaRowFromTop) return null; // submerso
+        if (surfBlockY >= seaRowFromTop - 2 || surfBlockY <= 2) return null;
+        
+        const treeRnd = hash01(treeCol * 97 + 12345 + state.seed);
+        if (treeRnd <= 0.92) return null; // sem árvore nessa coluna
+        
+        const trunkH = 3 + Math.floor(hash01(treeCol * 11 + 7 + state.seed) * 3);
+        const crown = 2 + Math.floor(hash01(treeCol * 19 + 3 + state.seed) * 2);
+        
+        return { surfBlockY, trunkH, crown };
+    }
+
+    // Verifica se um bloco é parte de uma árvore (tronco ou folha)
+    function isTreeBlock(worldCol, by, rows, seaRowFromTop) {
+        // Verifica tronco na mesma coluna
+        const treeInfo = getTreeInfo(worldCol, rows, seaRowFromTop);
+        if (treeInfo) {
+            const { surfBlockY, trunkH, crown } = treeInfo;
+            // Tronco: vai de surfBlockY-1 até surfBlockY-trunkH
+            if (by >= surfBlockY - trunkH && by < surfBlockY) {
+                return true;
+            }
+            // Copa da própria árvore
+            const crownCenterY = surfBlockY - trunkH - 1;
+            if (Math.abs(by - crownCenterY) <= crown) {
+                const ok = hash01(worldCol * 133 + (0 + 9) * 31 + ((by - crownCenterY) + 9) * 101 + state.seed) > 0.22;
+                if (ok) return true;
+            }
+        }
+        
+        // Verifica se é folha de uma árvore em coluna adjacente
+        const maxCrown = 4; // máximo possível de crown
+        for (let ox = -maxCrown; ox <= maxCrown; ox++) {
+            if (ox === 0) continue;
+            const nearbyCol = worldCol - ox;
+            const nearbyTree = getTreeInfo(nearbyCol, rows, seaRowFromTop);
+            if (!nearbyTree) continue;
+            
+            const { surfBlockY, trunkH, crown } = nearbyTree;
+            if (Math.abs(ox) > crown) continue;
+            
+            const crownCenterY = surfBlockY - trunkH - 1;
+            const oy = by - crownCenterY;
+            if (Math.abs(oy) > crown) continue;
+            
+            const d = Math.abs(ox) + Math.abs(oy);
+            if (d > crown + 1) continue;
+            
+            const ok = hash01(nearbyCol * 133 + (ox + 9) * 31 + (oy + 9) * 101 + state.seed) > 0.22;
+            if (ok) return true;
+        }
+        
+        return false;
     }
 
     function drawBlock(p, x, y, size, base, dark, speckKey) {
@@ -426,11 +486,25 @@ function initMinecraftBackground() {
 
         if (by < 0 || by >= rows) return false;
 
-        // Só quebra bloco de terreno “visível” (terra/grama/pedra) — evita quebrar água/sky.
         const surfBlockY = terrainSurfaceBlocks(worldCol, rows, seaRowFromTop);
-        if (surfBlockY > seaRowFromTop) return false; // abaixo do mar (submerso)
-        if (by < surfBlockY) return false; // céu/ar (ou árvore)
-        if (by >= rows - 1) return false; // bedrock não quebra
+        
+        // Verifica se e um bloco valido para quebrar
+        let canBreak = false;
+        
+        // Bloco de terreno (terra/grama/pedra)
+        if (surfBlockY <= seaRowFromTop && by >= surfBlockY && by < rows - 1) {
+            canBreak = true;
+        }
+        // Bloco de arvore (tronco ou folha)
+        else if (by < surfBlockY && by >= 0) {
+            canBreak = isTreeBlock(worldCol, by, rows, seaRowFromTop);
+        }
+        
+        // Nao quebra agua ou bedrock
+        if (surfBlockY > seaRowFromTop) canBreak = false;
+        if (by >= rows - 1) canBreak = false;
+
+        if (!canBreak) return false;
 
         const k = blockKey(worldCol, by);
         if (state.broken.has(k)) return false;
@@ -438,6 +512,96 @@ function initMinecraftBackground() {
         return true;
     }
 
+    // Tipos de blocos disponiveis para colocar
+    const BLOCK_TYPES = {
+        DIRT: { base: DIRT, dark: DIRT_DARK },
+        GRASS: { base: GRASS, dark: GRASS_DARK },
+        STONE: { base: STONE, dark: STONE_DARK },
+        SAND: { base: SAND, dark: DIRT_DARK },
+        WOOD: { base: WOOD, dark: WOOD_DARK },
+        LEAVES: { base: LEAVES, dark: LEAVES_DARK }
+    };
+    const BLOCK_TYPE_LIST = Object.keys(BLOCK_TYPES);
+
+    function cycleSelectedBlock(direction = 1) {
+        const currentIndex = BLOCK_TYPE_LIST.indexOf(state.selectedBlock);
+        const newIndex = (currentIndex + direction + BLOCK_TYPE_LIST.length) % BLOCK_TYPE_LIST.length;
+        state.selectedBlock = BLOCK_TYPE_LIST[newIndex];
+    }
+
+    function isPlaced(worldCol, by) {
+        return state.placed.has(blockKey(worldCol, by));
+    }
+
+    function getPlacedBlock(worldCol, by) {
+        return state.placed.get(blockKey(worldCol, by));
+    }
+
+    function placeBlockAtPointer() {
+        const px = state.renderPx || state.px;
+        const rows = state.renderRows;
+        const seaRowFromTop = state.renderSeaRowFromTop;
+        const baseCol = state.renderBaseCol;
+        const xOffset = state.renderXOffset;
+
+        if (!px || !rows) return false;
+        if (!Number.isFinite(baseCol) || !Number.isFinite(xOffset)) return false;
+
+        const simX = (state.pointerX / Math.max(1, state.w)) * state.simW;
+        const simY = (state.pointerY / Math.max(1, state.h)) * state.simH;
+
+        const colInView = Math.floor((simX - xOffset) / px);
+        const worldCol = baseCol + colInView;
+        const by = Math.floor(simY / px);
+
+        if (by < 0 || by >= rows) return false;
+        if (by >= rows - 1) return false; // nao coloca em cima do bedrock
+
+        const k = blockKey(worldCol, by);
+        
+        // Nao coloca onde ja tem bloco colocado
+        if (state.placed.has(k)) return false;
+        
+        // Pode colocar em espaco vazio (quebrado ou ar)
+        const surfBlockY = terrainSurfaceBlocks(worldCol, rows, seaRowFromTop);
+        const isBrokenBlock = state.broken.has(k);
+        const isAboveTerrain = by < surfBlockY;
+        const isTreeBlockHere = isTreeBlock(worldCol, by, rows, seaRowFromTop);
+        
+        // Pode colocar se: esta quebrado OU (esta acima do terreno E nao e arvore)
+        const canPlace = isBrokenBlock || (isAboveTerrain && !isTreeBlockHere);
+        
+        if (!canPlace) return false;
+
+        state.placed.set(k, state.selectedBlock);
+        // Se era um bloco quebrado, remove da lista de quebrados
+        state.broken.delete(k);
+        return true;
+    }
+
+    function spawnPlaceFx() {
+        const sx = (state.pointerX / Math.max(1, state.w)) * state.simW;
+        const sy = (state.pointerY / Math.max(1, state.h)) * state.simH;
+        const px = state.px;
+        const cx = Math.floor(sx / px) * px + px * 0.5;
+        const cy = Math.floor(sy / px) * px + px * 0.5;
+        const count = reduceMotion ? 4 : 8;
+        for (let i = 0; i < count; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const sp = 8 + Math.random() * 16;
+            state.breakFx.push({
+                x: cx,
+                y: cy,
+                vx: Math.cos(a) * sp,
+                vy: Math.sin(a) * sp - 6,
+                life: 0.5 + Math.random() * 0.3
+            });
+        }
+        if (state.breakFx.length > 120) state.breakFx.splice(0, state.breakFx.length - 120);
+    }
+
+
+        // Só quebra bloco de terreno “visível” (terra/grama/pedra) — evita quebrar água/sky.
     function tick(ts) {
         if (!state.running) return;
 
@@ -633,6 +797,20 @@ function initMinecraftBackground() {
         }
 
         // efeito de “quebra” (clique)
+                // Desenha blocos colocados pelo jogador
+        for (let ii = 0; ii < cols; ii++) {
+            const wCol = baseCol + ii;
+            const xx = (ii * px + xOffset) | 0;
+            if (xx > state.simW + px || xx < -px) continue;
+            for (let byy = 0; byy < rows; byy++) {
+                const placedType = getPlacedBlock(wCol, byy);
+                if (placedType && BLOCK_TYPES[placedType]) {
+                    const blockInfo = BLOCK_TYPES[placedType];
+                    drawBlock(p, xx, byy * px, px, blockInfo.base, blockInfo.dark, wCol * 5001 + byy * 73);
+                }
+            }
+        }
+
         if (state.breakFx.length) {
             for (let i = state.breakFx.length - 1; i >= 0; i--) {
                 const b = state.breakFx[i];
@@ -651,6 +829,20 @@ function initMinecraftBackground() {
 
         // seleção do “bloco” no cursor
         drawSelection(p);
+
+        // UI do bloco selecionado (canto inferior direito)
+        const uiSize = Math.max(12, px * 2);
+        const uiX = state.simW - uiSize - 8;
+        const uiY = state.simH - uiSize - 8;
+        const selectedType = BLOCK_TYPES[state.selectedBlock];
+        if (selectedType) {
+            p.fillStyle = 'rgba(0,0,0,0.5)';
+            p.fillRect(uiX - 2, uiY - 2, uiSize + 4, uiSize + 4);
+            drawBlock(p, uiX, uiY, uiSize, selectedType.base, selectedType.dark, 999999);
+            p.strokeStyle = 'rgba(255,255,255,0.7)';
+            p.lineWidth = 1;
+            p.strokeRect(uiX - 0.5, uiY - 0.5, uiSize + 1, uiSize + 1);
+        }
 
         // desenha para o canvas principal (sem smoothing pra manter pixel art)
         ctx.save();
@@ -700,12 +892,44 @@ function initMinecraftBackground() {
             state.pointerX = e.clientX;
             state.pointerY = e.clientY;
             state.pointerActive = true;
-            if (breakBlockAtPointer()) {
-                spawnBreakFx();
+            
+            // Clique esquerdo (button 0) = quebrar bloco
+            // Clique direito (button 2) = colocar bloco
+            if (e.button === 0) {
+                if (breakBlockAtPointer()) {
+                    spawnBreakFx();
+                }
+            } else if (e.button === 2) {
+                if (placeBlockAtPointer()) {
+                    spawnPlaceFx();
+                }
             }
         },
         { passive: true }
     );
+
+    // Previne menu de contexto em toda a pagina para permitir clique direito
+    window.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    }, { passive: false });
+
+    // Scroll do mouse para trocar bloco selecionado
+    window.addEventListener('wheel', (e) => {
+        if (e.deltaY > 0) {
+            cycleSelectedBlock(1);
+        } else if (e.deltaY < 0) {
+            cycleSelectedBlock(-1);
+        }
+    }, { passive: true });
+
+    // Teclas 1-6 para selecionar bloco diretamente
+    window.addEventListener('keydown', (e) => {
+        const num = parseInt(e.key);
+        if (num >= 1 && num <= BLOCK_TYPE_LIST.length) {
+            state.selectedBlock = BLOCK_TYPE_LIST[num - 1];
+        }
+    });
 
     window.addEventListener(
         'pointerleave',
