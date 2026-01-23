@@ -412,7 +412,6 @@ function initLumenWeaveBackground() {
         'pointerdown',
         (e) => {
             setPointer(e.clientX, e.clientY, true, state.pointerVX, state.pointerVY);
-            burst(e.clientX, e.clientY);
         },
         { passive: true }
     );
