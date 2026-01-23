@@ -1,84 +1,281 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Add parallax effect to hero section
-    const hero = document.querySelector('.hero');
     const navbar = document.querySelector('.navbar');
-    
-    // Parallax scroll effect - usando requestAnimationFrame para performance
-    let ticking = false;
+    const hero = document.querySelector('.hero');
+    const heroContent = hero?.querySelector('.hero-content') || null;
+    const cursorLens = document.querySelector('.cursor-lens');
+
+    const reduceMotionMq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const reduceMotion = Boolean(reduceMotionMq && reduceMotionMq.matches);
+
+    const hasFinePointer = Boolean(window.matchMedia?.('(pointer: fine)').matches);
+    const hasHover = Boolean(window.matchMedia?.('(hover: hover)').matches);
+
+    // -----------------------------
+    // Layout: altura do navbar
+    // -----------------------------
     let navTicking = false;
-    
     function updateNavbarHeight() {
         if (!navbar) return;
         const h = Math.ceil(navbar.getBoundingClientRect().height);
         document.documentElement.style.setProperty('--navbar-height', `${h}px`);
     }
 
-    function updateOnScroll() {
-        const scrolled = window.pageYOffset;
-        if (hero) {
-            hero.style.transform = `translate3d(0, ${scrolled * 0.3}px, 0)`;
-            hero.style.opacity = 1 - scrolled / 800;
-        }
-        
-        ticking = false;
-    }
-    
-    window.addEventListener(
-        'scroll',
-        () => {
-        if (!ticking) {
-            window.requestAnimationFrame(updateOnScroll);
-            ticking = true;
-        }
-        },
-        { passive: true }
-    );
-
     updateNavbarHeight();
-    // Recalcula com fontes carregadas (evita “pular” alinhamento)
     if (document.fonts && typeof document.fonts.ready?.then === 'function') {
         document.fonts.ready.then(updateNavbarHeight).catch(() => {});
     }
     window.addEventListener(
         'resize',
         () => {
-            if (!navTicking) {
-                navTicking = true;
-                window.requestAnimationFrame(() => {
-                    updateNavbarHeight();
-                    navTicking = false;
-                });
-            }
+            if (navTicking) return;
+            navTicking = true;
+            window.requestAnimationFrame(() => {
+                updateNavbarHeight();
+                layoutHScroll();
+                navTicking = false;
+            });
         },
         { passive: true }
     );
 
-    // Animate contact cards on scroll
-    const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
-    };
+    // -----------------------------
+    // Reveal por IntersectionObserver
+    // -----------------------------
+    const revealEls = Array.from(document.querySelectorAll('.reveal'));
+    if (!reduceMotion && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        io.unobserve(entry.target);
+                    }
+                }
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
+        );
+        revealEls.forEach((el) => io.observe(el));
+    } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+    }
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.style.animationPlayState = 'running';
+    // -----------------------------
+    // Tilt 3D + shine (cards/botões)
+    // -----------------------------
+    function clamp(v, a, b) {
+        return Math.max(a, Math.min(b, v));
+    }
+
+    function setupPointerShine(el) {
+        if (!el || reduceMotion || !hasFinePointer) return;
+        let rafId = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let hovering = false;
+
+        function apply() {
+            rafId = 0;
+            const r = el.getBoundingClientRect();
+            const px = clamp((lastX - r.left) / Math.max(1, r.width), 0, 1);
+            const py = clamp((lastY - r.top) / Math.max(1, r.height), 0, 1);
+            el.style.setProperty('--mx', `${(px * 100).toFixed(2)}%`);
+            el.style.setProperty('--my', `${(py * 100).toFixed(2)}%`);
+            if (!hovering) return;
+        }
+
+        function onMove(e) {
+            hovering = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            if (!rafId) rafId = window.requestAnimationFrame(apply);
+        }
+        function onLeave() {
+            hovering = false;
+            el.style.setProperty('--mx', `50%`);
+            el.style.setProperty('--my', `40%`);
+        }
+
+        el.addEventListener('pointermove', onMove, { passive: true });
+        el.addEventListener('pointerleave', onLeave, { passive: true });
+    }
+
+    function setupTilt(el) {
+        if (!el || reduceMotion || !hasFinePointer || !hasHover) return;
+        let rafId = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let active = false;
+
+        function apply() {
+            rafId = 0;
+            if (!active) return;
+            const r = el.getBoundingClientRect();
+            const px = clamp((lastX - r.left) / Math.max(1, r.width), 0, 1);
+            const py = clamp((lastY - r.top) / Math.max(1, r.height), 0, 1);
+
+            const ry = (px - 0.5) * 14; // deg
+            const rx = (0.5 - py) * 10; // deg
+
+            el.style.setProperty('--rx', `${rx.toFixed(2)}deg`);
+            el.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
+            el.style.setProperty('--mx', `${(px * 100).toFixed(2)}%`);
+            el.style.setProperty('--my', `${(py * 100).toFixed(2)}%`);
+        }
+
+        function onEnter(e) {
+            active = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            if (!rafId) rafId = window.requestAnimationFrame(apply);
+        }
+        function onMove(e) {
+            lastX = e.clientX;
+            lastY = e.clientY;
+            if (!rafId) rafId = window.requestAnimationFrame(apply);
+        }
+        function onLeave() {
+            active = false;
+            el.style.setProperty('--rx', `0deg`);
+            el.style.setProperty('--ry', `0deg`);
+            el.style.setProperty('--mx', `50%`);
+            el.style.setProperty('--my', `35%`);
+        }
+
+        el.addEventListener('pointerenter', onEnter, { passive: true });
+        el.addEventListener('pointermove', onMove, { passive: true });
+        el.addEventListener('pointerleave', onLeave, { passive: true });
+    }
+
+    document.querySelectorAll('[data-tilt]').forEach((el) => setupTilt(el));
+    document.querySelectorAll('.btn').forEach((el) => setupPointerShine(el));
+
+    // -----------------------------
+    // Cursor lens
+    // -----------------------------
+    if (cursorLens && !reduceMotion && hasFinePointer) {
+        let lensRaf = 0;
+        let lx = 0;
+        let ly = 0;
+        function applyLens() {
+            lensRaf = 0;
+            cursorLens.style.setProperty('--lens-x', `${lx.toFixed(2)}px`);
+            cursorLens.style.setProperty('--lens-y', `${ly.toFixed(2)}px`);
+            cursorLens.style.opacity = '1';
+        }
+        window.addEventListener(
+            'pointermove',
+            (e) => {
+                lx = e.clientX;
+                ly = e.clientY;
+                if (!lensRaf) lensRaf = window.requestAnimationFrame(applyLens);
+            },
+            { passive: true }
+        );
+        window.addEventListener(
+            'pointerleave',
+            () => {
+                cursorLens.style.opacity = '0';
+            },
+            { passive: true }
+        );
+    }
+
+    // -----------------------------
+    // Scroll controller (capítulos + hscroll + parallax suave)
+    // -----------------------------
+    const expSection = document.querySelector('[data-sticky-section="experience"]');
+    const expScenes = expSection ? Array.from(expSection.querySelectorAll('.scene')) : [];
+    const expDots = expSection ? Array.from(expSection.querySelectorAll('.dot')) : [];
+
+    const hSection = document.querySelector('[data-hscroll-section]');
+    const hViewport = hSection ? hSection.querySelector('.hscroll-viewport') : null;
+    const hTrack = hSection ? hSection.querySelector('.hscroll-track') : null;
+    let hMaxX = 0;
+
+    function stickyProgress(section) {
+        const start = section.offsetTop;
+        const end = start + section.offsetHeight - window.innerHeight;
+        if (end <= start) return 0;
+        return clamp((window.scrollY - start) / (end - start), 0, 1);
+    }
+
+    function layoutHScroll() {
+        if (!hSection || !hViewport || !hTrack) return;
+        hMaxX = Math.max(0, hTrack.scrollWidth - hViewport.clientWidth);
+        // 1px extra evita “pulo” no final em alguns browsers
+        hSection.style.height = `${Math.ceil(window.innerHeight + hMaxX + 1)}px`;
+    }
+
+    layoutHScroll();
+
+    let scrollRaf = 0;
+    function updateOnScroll() {
+        scrollRaf = 0;
+        const scrolled = window.scrollY || window.pageYOffset || 0;
+
+        // Parallax leve no conteúdo do hero (evita deslocar a seção inteira)
+        if (!reduceMotion && heroContent) {
+            const y = scrolled * 0.12;
+            heroContent.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
+            heroContent.style.opacity = String(clamp(1 - scrolled / 1050, 0, 1));
+        } else if (heroContent) {
+            heroContent.style.transform = '';
+            heroContent.style.opacity = '';
+        }
+
+        // Capítulos (experience)
+        if (expSection && expScenes.length) {
+            const p = stickyProgress(expSection);
+            expSection.style.setProperty('--exp-p', String(p));
+            expSection.style.setProperty('--exp-pct', `${(p * 100).toFixed(2)}%`);
+
+            expSection.style.setProperty('--portal-scale', (0.75 + p * 0.65).toFixed(3));
+            expSection.style.setProperty('--portal-rot', `${(p * 180).toFixed(2)}deg`);
+            expSection.style.setProperty('--portal-turn', `${p.toFixed(4)}turn`);
+            expSection.style.setProperty('--portal-shift', `${(-12 * p).toFixed(2)}px`);
+
+            const segMax = Math.max(1, expScenes.length - 1);
+            const seg = p * segMax; // 0..(n-1)
+            const active = clamp(Math.round(seg), 0, expScenes.length - 1);
+            expDots.forEach((d) => {
+                const i = Number(d.getAttribute('data-dot') || '0');
+                d.classList.toggle('is-active', i === active);
+            });
+
+            for (let i = 0; i < expScenes.length; i++) {
+                const scene = expScenes[i];
+                const d = Math.abs(seg - i);
+                const fade = clamp(1 - d, 0, 1); // crossfade linear entre cenas vizinhas
+                const op = Math.pow(fade, 1.35);
+                const y = (i - seg) * 28;
+                const s = 0.985 + op * 0.02;
+                scene.style.opacity = op.toFixed(3);
+                scene.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0) scale(${s.toFixed(3)})`;
+                scene.style.pointerEvents = op > 0.35 ? 'auto' : 'none';
             }
-        });
-    }, observerOptions);
+        }
 
-    const contactCards = document.querySelectorAll('.contact-card');
-    contactCards.forEach((card) => {
-        observer.observe(card);
-    });
+        // Horizontal scroll (cases)
+        if (hSection && hMaxX > 0) {
+            const p = stickyProgress(hSection);
+            hSection.style.setProperty('--hscroll-p', String(p));
+            hSection.style.setProperty('--hscroll-pct', `${(p * 100).toFixed(2)}%`);
+            hSection.style.setProperty('--hscroll-x', `${(-p * hMaxX).toFixed(2)}px`);
+        } else if (hSection) {
+            hSection.style.setProperty('--hscroll-p', '0');
+            hSection.style.setProperty('--hscroll-pct', '0%');
+            hSection.style.setProperty('--hscroll-x', '0px');
+        }
+    }
 
-    // Add smooth reveal animation for elements
-    const revealElements = document.querySelectorAll('.contact-title, .contact-card');
-    revealElements.forEach((el) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-    });
-    
+    function onScroll() {
+        if (scrollRaf) return;
+        scrollRaf = window.requestAnimationFrame(updateOnScroll);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateOnScroll();
+
     // Inicializa o fundo generativo (Lumen Weave)
     initLumenWeaveBackground();
 });

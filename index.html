@@ -10,10 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <div class="background-animation">
         <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
         <div class="bg-vignette" aria-hidden="true"></div>
     </div>
+    <div class="cursor-lens" aria-hidden="true"></div>
     
     <nav class="navbar">
         <div class="nav-container">
@@ -21,11 +23,17 @@
                 <span class="logo-text">TMEB</span>
                 <span class="logo-subtitle">CONSULTING</span>
             </div>
+            <div class="nav-actions">
+                <a class="nav-link" href="#experiencia">Abordagem</a>
+                <a class="nav-link" href="#servicos">Serviços</a>
+                <a class="nav-link" href="#contato">Contato</a>
+                <a class="btn btn-primary btn-small" href="#contato">Agendar conversa</a>
+            </div>
         </div>
     </nav>
 
-    <main>
-        <section class="hero">
+    <main id="conteudo">
+        <section class="hero" id="topo">
             <div class="hero-content">
                 <h1 class="hero-title">
                     <span class="title-line">Consultoria de</span>
@@ -33,17 +41,194 @@
                     <span class="title-line">para Empresas</span>
                 </h1>
                 <p class="hero-subtitle">Transformando desafios tecnológicos em soluções estratégicas</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#contato">Agendar conversa</a>
+                    <a class="btn btn-ghost" href="#experiencia">Ver abordagem</a>
+                </div>
+                <div class="hero-metrics" aria-label="Destaques">
+                    <div class="metric">
+                        <div class="metric-value">Estratégia</div>
+                        <div class="metric-label">que vira execução</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Arquitetura</div>
+                        <div class="metric-label">com clareza e impacto</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Entrega</div>
+                        <div class="metric-label">com governança</div>
+                    </div>
+                </div>
                 <div class="hero-decoration">
                     <div class="decoration-line"></div>
+                </div>
+                <div class="scroll-hint" aria-hidden="true">
+                    <span class="scroll-hint-label">Role</span>
+                    <span class="scroll-hint-line"></span>
                 </div>
             </div>
         </section>
 
-        <section class="contact-section">
+        <section class="experience" id="experiencia" aria-label="Experiência de scroll" data-sticky-section="experience">
+            <div class="experience-sticky">
+                <div class="experience-stage" aria-hidden="true">
+                    <div class="experience-portal"></div>
+                    <div class="experience-grid"></div>
+                </div>
+                <div class="experience-content">
+                    <div class="experience-eyebrow reveal">Uma abordagem em 3 capítulos</div>
+                    <div class="experience-scenes" role="list">
+                        <div class="scene" role="listitem" data-scene="0">
+                            <div class="scene-kicker">Capítulo 01</div>
+                            <h2 class="scene-title">Diagnóstico que enxerga o invisível</h2>
+                            <p class="scene-subtitle">Mapeamos riscos, gargalos e oportunidades com precisão — sem “achismos”.</p>
+                            <div class="scene-chips" aria-label="Áreas">
+                                <span class="chip">Observabilidade</span>
+                                <span class="chip">Segurança</span>
+                                <span class="chip">Custos</span>
+                                <span class="chip">Performance</span>
+                            </div>
+                        </div>
+                        <div class="scene" role="listitem" data-scene="1">
+                            <div class="scene-kicker">Capítulo 02</div>
+                            <h2 class="scene-title">Arquitetura que simplifica o complexo</h2>
+                            <p class="scene-subtitle">Desenhamos um caminho claro do estado atual até uma plataforma escalável e segura.</p>
+                            <div class="scene-chips" aria-label="Componentes">
+                                <span class="chip">Cloud</span>
+                                <span class="chip">APIs</span>
+                                <span class="chip">Dados</span>
+                                <span class="chip">Integrações</span>
+                            </div>
+                        </div>
+                        <div class="scene" role="listitem" data-scene="2">
+                            <div class="scene-kicker">Capítulo 03</div>
+                            <h2 class="scene-title">Entrega com governança e velocidade</h2>
+                            <p class="scene-subtitle">Transformamos estratégia em execução: roadmap, priorização, métricas e rituais.</p>
+                            <div class="scene-chips" aria-label="Práticas">
+                                <span class="chip">Roadmap</span>
+                                <span class="chip">OKRs</span>
+                                <span class="chip">SLA/SLO</span>
+                                <span class="chip">Riscos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="experience-progress" aria-hidden="true">
+                        <span class="dot" data-dot="0"></span>
+                        <span class="dot" data-dot="1"></span>
+                        <span class="dot" data-dot="2"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="services" id="servicos" aria-label="Serviços">
+            <div class="section-header reveal">
+                <h2 class="section-title">Serviços que dão vontade de mostrar</h2>
+                <p class="section-subtitle">Cards vivos, com profundidade e microinterações — sem perder performance.</p>
+            </div>
+            <div class="cards-grid">
+                <article class="fx-card reveal" data-tilt tabindex="0" aria-label="Estratégia e diagnóstico">
+                    <div class="fx-card-top">
+                        <div class="fx-badge">Estratégia</div>
+                        <div class="fx-icon" aria-hidden="true">◎</div>
+                    </div>
+                    <h3>Diagnóstico & Estratégia</h3>
+                    <p>Levantamento técnico, visão executiva e um plano que cabe no seu contexto.</p>
+                    <div class="fx-card-meta">
+                        <span class="meta">Mapa de riscos</span>
+                        <span class="meta">Quick wins</span>
+                    </div>
+                </article>
+
+                <article class="fx-card reveal" data-tilt tabindex="0" aria-label="Arquitetura e plataforma">
+                    <div class="fx-card-top">
+                        <div class="fx-badge">Arquitetura</div>
+                        <div class="fx-icon" aria-hidden="true">◍</div>
+                    </div>
+                    <h3>Arquitetura & Plataforma</h3>
+                    <p>Modernização, cloud, integração e dados com uma arquitetura elegante e segura.</p>
+                    <div class="fx-card-meta">
+                        <span class="meta">Cloud</span>
+                        <span class="meta">APIs</span>
+                    </div>
+                </article>
+
+                <article class="fx-card reveal" data-tilt tabindex="0" aria-label="Entrega e governança">
+                    <div class="fx-card-top">
+                        <div class="fx-badge">Execução</div>
+                        <div class="fx-icon" aria-hidden="true">◉</div>
+                    </div>
+                    <h3>Entrega & Governança</h3>
+                    <p>Operação madura com métricas, processos leves e aceleração de times.</p>
+                    <div class="fx-card-meta">
+                        <span class="meta">OKRs</span>
+                        <span class="meta">SLOs</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="hscroll" id="cases" aria-label="Cases em rolagem horizontal" data-hscroll-section>
+            <div class="hscroll-sticky">
+                <div class="hscroll-header reveal">
+                    <h2 class="section-title">Cases em modo “galeria”</h2>
+                    <p class="section-subtitle">Você rola para baixo, e os cases deslizam para o lado — como se fosse um filme.</p>
+                </div>
+                <div class="hscroll-viewport">
+                    <div class="hscroll-track" aria-label="Lista de cases">
+                        <article class="case-card" data-tilt tabindex="0">
+                            <div class="case-title">Redução de custos</div>
+                            <p>Arquitetura + observabilidade para cortar desperdício sem perder resiliência.</p>
+                            <div class="case-tags">
+                                <span class="tag">FinOps</span><span class="tag">SRE</span><span class="tag">Cloud</span>
+                            </div>
+                        </article>
+                        <article class="case-card" data-tilt tabindex="0">
+                            <div class="case-title">Escala com segurança</div>
+                            <p>Plataforma que cresce com governança, controle e velocidade de entrega.</p>
+                            <div class="case-tags">
+                                <span class="tag">IAM</span><span class="tag">Zero Trust</span><span class="tag">DevSecOps</span>
+                            </div>
+                        </article>
+                        <article class="case-card" data-tilt tabindex="0">
+                            <div class="case-title">Dados que viram decisão</div>
+                            <p>Pipeline + qualidade + modelagem para transformar dados em ação.</p>
+                            <div class="case-tags">
+                                <span class="tag">DataOps</span><span class="tag">BI</span><span class="tag">Governança</span>
+                            </div>
+                        </article>
+                        <article class="case-card" data-tilt tabindex="0">
+                            <div class="case-title">Performance perceptível</div>
+                            <p>Do tempo de resposta ao “sentir rápido”: latência, UX e arquitetura.</p>
+                            <div class="case-tags">
+                                <span class="tag">APM</span><span class="tag">Caching</span><span class="tag">CDN</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="hscroll-progress" aria-hidden="true">
+                    <span class="hscroll-bar"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta" aria-label="Chamada para ação">
+            <div class="cta-inner reveal">
+                <h2 class="cta-title">Vamos construir algo que o seu time se orgulha de manter</h2>
+                <p class="cta-subtitle">Uma conversa rápida para entender o cenário e sugerir os próximos passos.</p>
+                <div class="cta-actions">
+                    <a class="btn btn-primary" href="#contato">Falar agora</a>
+                    <a class="btn btn-ghost" href="#servicos">Ver serviços</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contato">
             <div class="contact-container">
-                <h2 class="contact-title">Entre em Contato</h2>
+                <h2 class="contact-title reveal">Entre em Contato</h2>
                 <div class="contact-grid">
-                    <div class="contact-card">
+                    <div class="contact-card reveal" data-tilt tabindex="0">
                         <div class="contact-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -52,7 +237,7 @@
                         <h3>Email</h3>
                         <p class="email-text">bruno.patriarca@tmeb.com.br</p>
                     </div>
-                    <div class="contact-card">
+                    <div class="contact-card reveal" data-tilt tabindex="0">
                         <div class="contact-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
@@ -61,7 +246,7 @@
                         <h3>Telefone</h3>
                         <p>+55 (11) 91487-2685</p>
                     </div>
-                    <div class="contact-card">
+                    <div class="contact-card reveal" data-tilt tabindex="0">
                         <div class="contact-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
@@ -80,6 +265,6 @@
         <p>&copy; 2026 TMEB Consulting. Todos os direitos reservados.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
