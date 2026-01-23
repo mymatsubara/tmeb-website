@@ -170,6 +170,9 @@ function initMinecraftBackground() {
     const LEAVES = { r: 46, g: 140, b: 74 };
     const LEAVES_DARK = { r: 34, g: 108, b: 58 };
 
+    // Seed aleatória para gerar um mundo diferente a cada visita
+    const worldSeed = Math.floor(Math.random() * 1000000);
+
     const state = {
         w: 0,
         h: 0,
@@ -194,7 +197,8 @@ function initMinecraftBackground() {
         renderXOffset: 0,
         renderRows: 0,
         renderSeaRowFromTop: 0,
-        renderPx: 0
+        renderPx: 0,
+        seed: worldSeed
     };
 
     function resize() {
@@ -231,16 +235,18 @@ function initMinecraftBackground() {
         state.broken = new Set();
         state.breakFx = [];
 
-        // estrelas fixas (noite)
+        // estrelas fixas (noite) - usa seeded random para variar entre visitas
         const starCount = reduceMotion ? 90 : 140;
         state.stars = new Array(starCount);
         for (let i = 0; i < starCount; i++) {
+            // Usa hash01 com seed para posições determinísticas mas diferentes por visita
+            const starSeed = state.seed + i * 7919;
             state.stars[i] = {
-                x: Math.random(),
-                y: Math.random() * 0.6,
-                a: 0.25 + Math.random() * 0.75,
-                tw: 0.8 + Math.random() * 2.2,
-                ph: Math.random() * Math.PI * 2
+                x: hash01(starSeed),
+                y: hash01(starSeed + 1) * 0.6,
+                a: 0.25 + hash01(starSeed + 2) * 0.75,
+                tw: 0.8 + hash01(starSeed + 3) * 2.2,
+                ph: hash01(starSeed + 4) * Math.PI * 2
             };
         }
 
@@ -248,13 +254,14 @@ function initMinecraftBackground() {
         const cloudCount = reduceMotion ? 4 : 6;
         state.clouds = new Array(cloudCount);
         for (let i = 0; i < cloudCount; i++) {
+            const cloudSeed = state.seed + i * 6271 + 100000;
             state.clouds[i] = {
-                x: Math.random(),
-                y: Math.random() * 0.28,
-                w: 10 + Math.floor(Math.random() * 14),
-                h: 3 + Math.floor(Math.random() * 3),
-                sp: (0.5 + Math.random() * 1.1) * (reduceMotion ? 0.35 : 0.6),
-                a: 0.5 + Math.random() * 0.4
+                x: hash01(cloudSeed),
+                y: hash01(cloudSeed + 1) * 0.28,
+                w: 10 + Math.floor(hash01(cloudSeed + 2) * 14),
+                h: 3 + Math.floor(hash01(cloudSeed + 3) * 3),
+                sp: (0.5 + hash01(cloudSeed + 4) * 1.1) * (reduceMotion ? 0.35 : 0.6),
+                a: 0.5 + hash01(cloudSeed + 5) * 0.4
             };
         }
     }
@@ -276,8 +283,10 @@ function initMinecraftBackground() {
 
     function terrainSurfaceBlocks(worldCol, rows, seaRowFromTop) {
         // retorna y do topo do terreno em “blocos” (0 em cima)
-        const n = fbm1D(worldCol * 0.055);
-        const n2 = fbm1D(worldCol * 0.012) * 0.65;
+        // Usa a seed para gerar um mundo diferente a cada visita
+        const seedOffset = state.seed * 0.1;
+        const n = fbm1D((worldCol + seedOffset) * 0.055);
+        const n2 = fbm1D((worldCol + seedOffset) * 0.012) * 0.65;
         const h = clamp(n * 0.7 + n2 * 0.3, 0, 1);
 
         const minGroundBlocksFromBottom = Math.floor(rows * 0.25);
@@ -590,26 +599,26 @@ function initMinecraftBackground() {
                 }
             }
 
-            // árvores ocasionais
+            // árvores ocasionais (usa seed para variar entre visitas)
             const canTree = (worldCol - lastTree) > treeCooldown;
-            const treeRnd = hash01(worldCol * 97 + 12345);
+            const treeRnd = hash01(worldCol * 97 + 12345 + state.seed);
             const treeOk = canTree && treeRnd > 0.92 && surfBlockY < seaRowFromTop - 2 && surfBlockY > 2;
             if (treeOk) {
                 lastTree = worldCol;
-                const trunkH = 3 + Math.floor(hash01(worldCol * 11 + 7) * 3);
+                const trunkH = 3 + Math.floor(hash01(worldCol * 11 + 7 + state.seed) * 3);
                 const trunkX = x;
                 for (let tby = 1; tby <= trunkH; tby++) {
                     const by = surfBlockY - tby;
                     if (!isBroken(worldCol, by)) {
-                        drawBlock(p, trunkX, by * px, px, WOOD, WOOD_DARK, worldCol * 9001 + tby);
+                        drawBlock(p, trunkX, by * px, px, WOOD, WOOD_DARK, worldCol * 9001 + tby + state.seed);
                     }
                 }
-                const crown = 2 + Math.floor(hash01(worldCol * 19 + 3) * 2);
+                const crown = 2 + Math.floor(hash01(worldCol * 19 + 3 + state.seed) * 2);
                 for (let oy = -crown; oy <= crown; oy++) {
                     for (let ox = -crown; ox <= crown; ox++) {
                         const d = Math.abs(ox) + Math.abs(oy);
                         if (d > crown + 1) continue;
-                        const ok = hash01(worldCol * 133 + (ox + 9) * 31 + (oy + 9) * 101) > 0.22;
+                        const ok = hash01(worldCol * 133 + (ox + 9) * 31 + (oy + 9) * 101 + state.seed) > 0.22;
                         if (!ok) continue;
                         const leafWorldCol = worldCol + ox;
                         const bx = trunkX + ox * px;
