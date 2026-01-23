@@ -79,9 +79,647 @@ document.addEventListener('DOMContentLoaded', function () {
         el.style.transform = 'translateY(30px)';
     });
     
-    // Inicializa o fundo generativo (Lumen Weave)
-    initLiquidInkBackground();
+    // Inicializa o fundo inspirado em Minecraft
+    initMinecraftBackground();
 });
+
+function initMinecraftBackground() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    if (!ctx) return;
+
+    const reduceMotionMq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    let reduceMotion = Boolean(reduceMotionMq && reduceMotionMq.matches);
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    function smoothstep(t) {
+        const x = clamp(t, 0, 1);
+        return x * x * (3 - 2 * x);
+    }
+
+    function hash01(n) {
+        // hash determinístico -> [0, 1)
+        let x = n | 0;
+        x = (x ^ (x >>> 16)) | 0;
+        x = Math.imul(x, 0x7feb352d) | 0;
+        x = (x ^ (x >>> 15)) | 0;
+        x = Math.imul(x, 0x846ca68b) | 0;
+        x = (x ^ (x >>> 16)) >>> 0;
+        return x / 4294967296;
+    }
+
+    function noise1D(x) {
+        const xi = Math.floor(x);
+        const t = x - xi;
+        const a = hash01(xi);
+        const b = hash01(xi + 1);
+        return lerp(a, b, smoothstep(t));
+    }
+
+    function fbm1D(x) {
+        let sum = 0;
+        let amp = 0.55;
+        let freq = 1;
+        for (let o = 0; o < 4; o++) {
+            sum += amp * noise1D(x * freq);
+            freq *= 2;
+            amp *= 0.5;
+        }
+        return sum;
+    }
+
+    function mixRgb(a, b, t) {
+        return {
+            r: Math.round(lerp(a.r, b.r, t)),
+            g: Math.round(lerp(a.g, b.g, t)),
+            b: Math.round(lerp(a.b, b.b, t))
+        };
+    }
+
+    function rgbStr(c) {
+        return `rgb(${c.r}, ${c.g}, ${c.b})`;
+    }
+
+    function rgbaStr(c, a) {
+        return `rgba(${c.r}, ${c.g}, ${c.b}, ${a})`;
+    }
+
+    // Paleta “Minecraft-like” (original, sem assets)
+    const SKY_DAY_TOP = { r: 92, g: 180, b: 246 };
+    const SKY_DAY_BOT = { r: 210, g: 238, b: 255 };
+    const SKY_NIGHT_TOP = { r: 6, g: 8, b: 20 };
+    const SKY_NIGHT_BOT = { r: 12, g: 18, b: 40 };
+    const SKY_DUSK = { r: 86, g: 52, b: 126 };
+
+    const GRASS = { r: 60, g: 165, b: 80 };
+    const GRASS_DARK = { r: 44, g: 132, b: 66 };
+    const DIRT = { r: 139, g: 92, b: 52 };
+    const DIRT_DARK = { r: 108, g: 70, b: 40 };
+    const STONE = { r: 120, g: 124, b: 132 };
+    const STONE_DARK = { r: 92, g: 96, b: 104 };
+    const BEDROCK = { r: 44, g: 46, b: 52 };
+    const SAND = { r: 214, g: 196, b: 132 };
+    const WATER = { r: 45, g: 110, b: 220 };
+    const WATER_DARK = { r: 30, g: 80, b: 180 };
+    const WOOD = { r: 170, g: 124, b: 76 };
+    const WOOD_DARK = { r: 132, g: 96, b: 58 };
+    const LEAVES = { r: 46, g: 140, b: 74 };
+    const LEAVES_DARK = { r: 34, g: 108, b: 58 };
+
+    const state = {
+        w: 0,
+        h: 0,
+        dpr: 1,
+        running: true,
+        tLast: 0,
+        pointerX: 0,
+        pointerY: 0,
+        pointerActive: false,
+        pointerSpeed: 0,
+        simW: 0,
+        simH: 0,
+        px: 0,
+        block: 6,
+        pix: null,
+        pixCtx: null,
+        stars: [],
+        clouds: [],
+        breakFx: [],
+        broken: new Set(),
+        renderBaseCol: 0,
+        renderXOffset: 0,
+        renderRows: 0,
+        renderSeaRowFromTop: 0,
+        renderPx: 0
+    };
+
+    function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const cssW = Math.max(1, Math.floor(rect.width));
+        const cssH = Math.max(1, Math.floor(rect.height));
+
+        state.dpr = clamp(window.devicePixelRatio || 1, 1, 2);
+        state.w = cssW;
+        state.h = cssH;
+
+        canvas.width = Math.floor(cssW * state.dpr);
+        canvas.height = Math.floor(cssH * state.dpr);
+        ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        ctx.imageSmoothingEnabled = false;
+
+        // Render em baixa resolução pra manter “pixel art”
+        const targetW = clamp(Math.floor(cssW / (reduceMotion ? 5 : 4)), 220, 420);
+        const targetH = Math.max(140, Math.floor(targetW * (cssH / cssW)));
+        state.simW = targetW;
+        state.simH = targetH;
+
+        // tamanho do “bloco” em pixels da simulação
+        state.block = clamp(Math.round(targetW / 72), 5, 8);
+        state.px = state.block;
+
+        state.pix = document.createElement('canvas');
+        state.pix.width = targetW;
+        state.pix.height = targetH;
+        state.pixCtx = state.pix.getContext('2d', { alpha: false });
+        state.pixCtx.imageSmoothingEnabled = false;
+
+        // Quebras são dependentes da grade atual; ao redimensionar, reseta.
+        state.broken = new Set();
+        state.breakFx = [];
+
+        // estrelas fixas (noite)
+        const starCount = reduceMotion ? 90 : 140;
+        state.stars = new Array(starCount);
+        for (let i = 0; i < starCount; i++) {
+            state.stars[i] = {
+                x: Math.random(),
+                y: Math.random() * 0.6,
+                a: 0.25 + Math.random() * 0.75,
+                tw: 0.8 + Math.random() * 2.2,
+                ph: Math.random() * Math.PI * 2
+            };
+        }
+
+        // nuvens “blocadas”
+        const cloudCount = reduceMotion ? 4 : 6;
+        state.clouds = new Array(cloudCount);
+        for (let i = 0; i < cloudCount; i++) {
+            state.clouds[i] = {
+                x: Math.random(),
+                y: Math.random() * 0.28,
+                w: 10 + Math.floor(Math.random() * 14),
+                h: 3 + Math.floor(Math.random() * 3),
+                sp: (0.5 + Math.random() * 1.1) * (reduceMotion ? 0.35 : 0.6),
+                a: 0.5 + Math.random() * 0.4
+            };
+        }
+    }
+
+    function drawSky(p, dayAmt, twilightAmt) {
+        // gradiente vertical “pixelado”
+        const topBase = mixRgb(SKY_NIGHT_TOP, SKY_DAY_TOP, dayAmt);
+        const botBase = mixRgb(SKY_NIGHT_BOT, SKY_DAY_BOT, dayAmt);
+        const top = mixRgb(topBase, SKY_DUSK, twilightAmt * 0.7);
+        const bot = mixRgb(botBase, SKY_DUSK, twilightAmt * 0.35);
+
+        for (let y = 0; y < state.simH; y++) {
+            const t = y / Math.max(1, state.simH - 1);
+            const c = mixRgb(top, bot, t);
+            p.fillStyle = rgbStr(c);
+            p.fillRect(0, y, state.simW, 1);
+        }
+    }
+
+    function terrainSurfaceBlocks(worldCol, rows, seaRowFromTop) {
+        // retorna y do topo do terreno em “blocos” (0 em cima)
+        const n = fbm1D(worldCol * 0.055);
+        const n2 = fbm1D(worldCol * 0.012) * 0.65;
+        const h = clamp(n * 0.7 + n2 * 0.3, 0, 1);
+
+        const minGroundBlocksFromBottom = Math.floor(rows * 0.25);
+        const maxGroundBlocksFromBottom = Math.floor(rows * 0.58);
+        const groundBlocks = Math.floor(lerp(minGroundBlocksFromBottom, maxGroundBlocksFromBottom, h));
+        let yTop = rows - groundBlocks;
+
+        // suaviza perto da “praia”
+        const beach = seaRowFromTop + 1;
+        if (yTop > beach) {
+            yTop = Math.min(rows - 2, yTop + Math.floor((yTop - beach) * 0.15));
+        }
+        return clamp(yTop, 0, rows - 2);
+    }
+
+    function blockKey(worldCol, by) {
+        return `${worldCol}:${by}`;
+    }
+
+    function isBroken(worldCol, by) {
+        return state.broken.has(blockKey(worldCol, by));
+    }
+
+    function drawBlock(p, x, y, size, base, dark, speckKey) {
+        p.fillStyle = rgbStr(base);
+        p.fillRect(x, y, size, size);
+
+        // highlight topo/esquerda + sombra baixo/direita (efeito “voxel”)
+        p.fillStyle = rgbaStr({ r: 255, g: 255, b: 255 }, 0.10);
+        p.fillRect(x, y, size, 1);
+        p.fillRect(x, y, 1, size);
+
+        p.fillStyle = rgbaStr({ r: 0, g: 0, b: 0 }, 0.12);
+        p.fillRect(x, y + size - 1, size, 1);
+        p.fillRect(x + size - 1, y, 1, size);
+
+        // “textura” determinística (2 pixels)
+        const r1 = hash01(speckKey);
+        const r2 = hash01(speckKey + 1337);
+        const ox1 = (r1 * (size - 2) + 1) | 0;
+        const oy1 = (r2 * (size - 2) + 1) | 0;
+        p.fillStyle = rgbaStr(dark, 0.22);
+        p.fillRect(x + ox1, y + oy1, 1, 1);
+        const ox2 = (hash01(speckKey + 42) * (size - 2) + 1) | 0;
+        const oy2 = (hash01(speckKey + 99) * (size - 2) + 1) | 0;
+        p.fillRect(x + ox2, y + oy2, 1, 1);
+    }
+
+    function drawCloud(p, cloud, dayAmt) {
+        // nuvem em blocos (só aparece bem no dia)
+        const alpha = cloud.a * clamp(dayAmt * 1.2, 0, 1);
+        if (alpha <= 0.02) return;
+
+        const px = state.px;
+        const x0 = Math.floor(cloud.x * state.simW);
+        const y0 = Math.floor(cloud.y * state.simH);
+        p.fillStyle = `rgba(255,255,255,${alpha})`;
+
+        for (let r = 0; r < cloud.h; r++) {
+            const rowW = cloud.w - Math.floor(Math.abs(r - cloud.h * 0.45) * 1.4);
+            const sx = x0 + (r % 2) * px;
+            p.fillRect(sx, y0 + r * px, rowW * px, px);
+        }
+        // sombra suave
+        p.fillStyle = `rgba(0,0,0,${alpha * 0.10})`;
+        p.fillRect(x0 + px, y0 + cloud.h * px, (cloud.w - 2) * px, px);
+    }
+
+    function drawSelection(p) {
+        if (!state.pointerActive) return;
+        const px = state.px;
+        const sx = (state.pointerX / Math.max(1, state.w)) * state.simW;
+        const sy = (state.pointerY / Math.max(1, state.h)) * state.simH;
+        const x = Math.floor(sx / px) * px;
+        const y = Math.floor(sy / px) * px;
+
+        p.save();
+        p.strokeStyle = 'rgba(255,255,255,0.55)';
+        p.lineWidth = 1;
+        p.strokeRect(x + 0.5, y + 0.5, px - 1, px - 1);
+        // cantos
+        p.strokeStyle = 'rgba(0,0,0,0.35)';
+        p.beginPath();
+        p.moveTo(x + 1, y + 3);
+        p.lineTo(x + 1, y + 1);
+        p.lineTo(x + 3, y + 1);
+        p.moveTo(x + px - 2, y + 3);
+        p.lineTo(x + px - 2, y + 1);
+        p.lineTo(x + px - 4, y + 1);
+        p.moveTo(x + 1, y + px - 4);
+        p.lineTo(x + 1, y + px - 2);
+        p.lineTo(x + 3, y + px - 2);
+        p.moveTo(x + px - 2, y + px - 4);
+        p.lineTo(x + px - 2, y + px - 2);
+        p.lineTo(x + px - 4, y + px - 2);
+        p.stroke();
+        p.restore();
+    }
+
+    function spawnBreakFx() {
+        const sx = (state.pointerX / Math.max(1, state.w)) * state.simW;
+        const sy = (state.pointerY / Math.max(1, state.h)) * state.simH;
+        const px = state.px;
+        const cx = Math.floor(sx / px) * px + px * 0.5;
+        const cy = Math.floor(sy / px) * px + px * 0.5;
+        const count = reduceMotion ? 6 : 12;
+        for (let i = 0; i < count; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const sp = 12 + Math.random() * 26;
+            state.breakFx.push({
+                x: cx,
+                y: cy,
+                vx: Math.cos(a) * sp,
+                vy: Math.sin(a) * sp - 8,
+                life: 0.9 + Math.random() * 0.4
+            });
+        }
+        if (state.breakFx.length > 120) state.breakFx.splice(0, state.breakFx.length - 120);
+    }
+
+    function breakBlockAtPointer() {
+        const px = state.renderPx || state.px;
+        const rows = state.renderRows;
+        const seaRowFromTop = state.renderSeaRowFromTop;
+        const baseCol = state.renderBaseCol;
+        const xOffset = state.renderXOffset;
+
+        if (!px || !rows) return false;
+        if (!Number.isFinite(baseCol) || !Number.isFinite(xOffset)) return false;
+
+        const simX = (state.pointerX / Math.max(1, state.w)) * state.simW;
+        const simY = (state.pointerY / Math.max(1, state.h)) * state.simH;
+
+        const colInView = Math.floor((simX - xOffset) / px);
+        const worldCol = baseCol + colInView;
+        const by = Math.floor(simY / px);
+
+        if (by < 0 || by >= rows) return false;
+
+        // Só quebra bloco de terreno “visível” (terra/grama/pedra) — evita quebrar água/sky.
+        const surfBlockY = terrainSurfaceBlocks(worldCol, rows, seaRowFromTop);
+        if (surfBlockY > seaRowFromTop) return false; // abaixo do mar (submerso)
+        if (by < surfBlockY) return false; // céu/ar (ou árvore)
+        if (by >= rows - 1) return false; // bedrock não quebra
+
+        const k = blockKey(worldCol, by);
+        if (state.broken.has(k)) return false;
+        state.broken.add(k);
+        return true;
+    }
+
+    function tick(ts) {
+        if (!state.running) return;
+
+        const fpsCap = reduceMotion ? 12 : 60;
+        const minFrameMs = 1000 / fpsCap;
+        if (state.tLast && ts - state.tLast < minFrameMs * 0.9) {
+            requestAnimationFrame(tick);
+            return;
+        }
+
+        const dt = state.tLast ? Math.min(0.033, (ts - state.tLast) / 1000) : 1 / fpsCap;
+        state.tLast = ts;
+
+        const p = state.pixCtx;
+        if (!p) {
+            requestAnimationFrame(tick);
+            return;
+        }
+
+        // ciclo dia/noite ~ 80s
+        const cycle = (ts * 0.000012) % 1;
+        const phase = cycle * Math.PI * 2;
+        const dayAmt = clamp(Math.sin(phase) * 0.5 + 0.5, 0, 1);
+        const twilightAmt = clamp(1 - Math.abs(Math.sin(phase)) * 2.2, 0, 1);
+        const nightAmt = 1 - dayAmt;
+
+        drawSky(p, dayAmt, twilightAmt);
+
+        // estrelas à noite
+        if (nightAmt > 0.08) {
+            const a = clamp((nightAmt - 0.08) / 0.92, 0, 1);
+            p.save();
+            p.globalCompositeOperation = 'screen';
+            for (let i = 0; i < state.stars.length; i++) {
+                const s = state.stars[i];
+                const tw = 0.7 + 0.3 * Math.sin(s.ph + ts * 0.001 * s.tw);
+                const alpha = s.a * tw * a;
+                const x = Math.floor(s.x * state.simW);
+                const y = Math.floor(s.y * state.simH);
+                p.fillStyle = `rgba(255,255,255,${alpha})`;
+                p.fillRect(x, y, 1, 1);
+                if (!reduceMotion && alpha > 0.6 && (i % 9 === 0)) {
+                    p.fillStyle = `rgba(180,220,255,${alpha * 0.25})`;
+                    p.fillRect(x - 1, y, 1, 1);
+                    p.fillRect(x + 1, y, 1, 1);
+                }
+            }
+            p.restore();
+        }
+
+        // sol/lua em pixel art
+        const sunX = lerp(-0.12, 1.12, cycle) * state.simW;
+        const sunY = (0.22 - Math.sin(phase) * 0.12) * state.simH;
+        const r = Math.max(4, Math.floor(state.simW * 0.02));
+        p.save();
+        p.globalCompositeOperation = 'screen';
+        if (dayAmt > 0.12) {
+            p.fillStyle = `rgba(255,245,210,${clamp(dayAmt, 0, 1)})`;
+            p.beginPath();
+            p.arc(sunX, sunY, r, 0, Math.PI * 2);
+            p.fill();
+        } else {
+            p.fillStyle = `rgba(220,235,255,${clamp(nightAmt, 0, 1) * 0.9})`;
+            p.beginPath();
+            p.arc(sunX, sunY, r, 0, Math.PI * 2);
+            p.fill();
+        }
+        p.restore();
+
+        // nuvens (movem devagar)
+        for (let i = 0; i < state.clouds.length; i++) {
+            const c = state.clouds[i];
+            c.x += (c.sp * dt) / Math.max(1, state.simW / 100);
+            if (c.x > 1.25) {
+                c.x = -0.25;
+                c.y = Math.random() * 0.28;
+            }
+            drawCloud(p, c, dayAmt);
+        }
+
+        // terreno “scrollando”
+        const px = state.px;
+        const block = state.block;
+        const cols = Math.ceil(state.simW / px) + 2;
+        const rows = Math.ceil(state.simH / px) + 2;
+
+        const scroll = ts * (reduceMotion ? 0.00014 : 0.00022); // blocos por ms
+        const baseCol = Math.floor(scroll);
+        const frac = scroll - baseCol;
+        const xOffset = -frac * px;
+
+        const seaBlocksFromBottom = Math.floor(rows * 0.30);
+        const seaRowFromTop = rows - seaBlocksFromBottom;
+
+        // Parâmetros atuais (usados para mapear clique -> bloco)
+        state.renderBaseCol = baseCol;
+        state.renderXOffset = xOffset;
+        state.renderRows = rows;
+        state.renderSeaRowFromTop = seaRowFromTop;
+        state.renderPx = px;
+
+        // água ao fundo (se houver)
+        const waterTopY = seaRowFromTop * px;
+        p.fillStyle = rgbaStr(WATER_DARK, 0.55);
+        p.fillRect(0, waterTopY, state.simW, state.simH - waterTopY);
+
+        // desenha colunas
+        const treeCooldown = Math.max(5, Math.floor(cols / 10));
+        let lastTree = -99999;
+
+        for (let i = 0; i < cols; i++) {
+            const worldCol = baseCol + i;
+            const x = (i * px + xOffset) | 0;
+            if (x > state.simW + px || x < -px) continue;
+
+            const surfBlockY = terrainSurfaceBlocks(worldCol, rows, seaRowFromTop);
+            const surfY = surfBlockY * px;
+
+            // se abaixo do mar: desenha “água” por cima
+            if (surfBlockY > seaRowFromTop) {
+                // água até o nível do mar (com “ondas”)
+                const wave = Math.sin(ts * 0.003 + worldCol * 0.35) * 1.2;
+                const yWave = (waterTopY + wave) | 0;
+                p.fillStyle = rgbaStr(WATER, 0.55);
+                p.fillRect(x, yWave, px, state.simH - yWave);
+                // praia/sand no fundo
+                for (let by = surfBlockY; by < Math.min(rows, surfBlockY + 2); by++) {
+                    if (isBroken(worldCol, by)) continue;
+                    drawBlock(p, x, by * px, px, SAND, DIRT_DARK, worldCol * 8191 + by * 131);
+                }
+                for (let by = surfBlockY + 2; by < rows; by++) {
+                    const depth = by - surfBlockY;
+                    if (isBroken(worldCol, by)) continue;
+                    if (by >= rows - 1) {
+                        drawBlock(p, x, by * px, px, BEDROCK, BEDROCK, worldCol * 8191 + by * 131);
+                    } else if (depth < 5) {
+                        drawBlock(p, x, by * px, px, DIRT, DIRT_DARK, worldCol * 8191 + by * 131);
+                    } else {
+                        drawBlock(p, x, by * px, px, STONE, STONE_DARK, worldCol * 8191 + by * 131);
+                    }
+                }
+                continue;
+            }
+
+            // terra/grama
+            for (let by = surfBlockY; by < rows; by++) {
+                const depth = by - surfBlockY;
+                const key = worldCol * 8191 + by * 131;
+
+                if (isBroken(worldCol, by)) continue;
+                if (by >= rows - 1) {
+                    drawBlock(p, x, by * px, px, BEDROCK, BEDROCK, key);
+                } else if (depth === 0) {
+                    drawBlock(p, x, by * px, px, GRASS, GRASS_DARK, key);
+                } else if (depth < 4) {
+                    drawBlock(p, x, by * px, px, DIRT, DIRT_DARK, key);
+                } else {
+                    drawBlock(p, x, by * px, px, STONE, STONE_DARK, key);
+                }
+            }
+
+            // árvores ocasionais
+            const canTree = (worldCol - lastTree) > treeCooldown;
+            const treeRnd = hash01(worldCol * 97 + 12345);
+            const treeOk = canTree && treeRnd > 0.92 && surfBlockY < seaRowFromTop - 2 && surfBlockY > 2;
+            if (treeOk) {
+                lastTree = worldCol;
+                const trunkH = 3 + Math.floor(hash01(worldCol * 11 + 7) * 3);
+                const trunkX = x;
+                for (let tby = 1; tby <= trunkH; tby++) {
+                    const by = surfBlockY - tby;
+                    if (!isBroken(worldCol, by)) {
+                        drawBlock(p, trunkX, by * px, px, WOOD, WOOD_DARK, worldCol * 9001 + tby);
+                    }
+                }
+                const crown = 2 + Math.floor(hash01(worldCol * 19 + 3) * 2);
+                for (let oy = -crown; oy <= crown; oy++) {
+                    for (let ox = -crown; ox <= crown; ox++) {
+                        const d = Math.abs(ox) + Math.abs(oy);
+                        if (d > crown + 1) continue;
+                        const ok = hash01(worldCol * 133 + (ox + 9) * 31 + (oy + 9) * 101) > 0.22;
+                        if (!ok) continue;
+                        const leafWorldCol = worldCol + ox;
+                        const bx = trunkX + ox * px;
+                        const by = surfBlockY - trunkH - 1 + oy;
+                        if (bx < -px || bx > state.simW + px) continue;
+                        if (by < 0 || by * px > state.simH) continue;
+                        if (isBroken(leafWorldCol, by)) continue;
+                        drawBlock(p, bx, by * px, px, LEAVES, LEAVES_DARK, worldCol * 7001 + ox * 17 + oy * 29);
+                    }
+                }
+            }
+        }
+
+        // efeito de “quebra” (clique)
+        if (state.breakFx.length) {
+            for (let i = state.breakFx.length - 1; i >= 0; i--) {
+                const b = state.breakFx[i];
+                b.life -= dt * 1.35;
+                if (b.life <= 0) {
+                    state.breakFx.splice(i, 1);
+                    continue;
+                }
+                b.vy += 65 * dt;
+                b.x += b.vx * dt;
+                b.y += b.vy * dt;
+                p.fillStyle = `rgba(255,255,255,${clamp(b.life, 0, 1) * 0.75})`;
+                p.fillRect(b.x | 0, b.y | 0, 1, 1);
+            }
+        }
+
+        // seleção do “bloco” no cursor
+        drawSelection(p);
+
+        // desenha para o canvas principal (sem smoothing pra manter pixel art)
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        ctx.clearRect(0, 0, state.w, state.h);
+        ctx.drawImage(state.pix, 0, 0, state.w, state.h);
+        ctx.restore();
+
+        requestAnimationFrame(tick);
+    }
+
+    function onVisibility() {
+        const hidden = document.hidden;
+        state.running = !hidden;
+        if (!hidden) {
+            state.tLast = 0;
+            requestAnimationFrame(tick);
+        }
+    }
+
+    let lastPX = 0;
+    let lastPY = 0;
+    let lastPT = 0;
+
+    window.addEventListener(
+        'pointermove',
+        (e) => {
+            const now = performance.now();
+            const dx = e.clientX - lastPX;
+            const dy = e.clientY - lastPY;
+            const dtt = Math.max(1, now - lastPT);
+            lastPX = e.clientX;
+            lastPY = e.clientY;
+            lastPT = now;
+
+            state.pointerX = e.clientX;
+            state.pointerY = e.clientY;
+            state.pointerActive = true;
+            state.pointerSpeed = Math.hypot(dx, dy) / dtt * 1000;
+        },
+        { passive: true }
+    );
+
+    window.addEventListener(
+        'pointerdown',
+        (e) => {
+            state.pointerX = e.clientX;
+            state.pointerY = e.clientY;
+            state.pointerActive = true;
+            if (breakBlockAtPointer()) {
+                spawnBreakFx();
+            }
+        },
+        { passive: true }
+    );
+
+    window.addEventListener(
+        'pointerleave',
+        () => {
+            state.pointerActive = false;
+            state.pointerSpeed = 0;
+        },
+        { passive: true }
+    );
+
+    window.addEventListener('resize', () => resize(), { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
+
+    if (reduceMotionMq && typeof reduceMotionMq.addEventListener === 'function') {
+        reduceMotionMq.addEventListener('change', (e) => {
+            reduceMotion = Boolean(e.matches);
+            resize();
+        });
+    }
+
+    resize();
+    requestAnimationFrame(tick);
+}
 
 function initLiquidInkBackground() {
     const canvas = document.getElementById('bg-canvas');
