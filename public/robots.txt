@@ -1,0 +1,11 @@
+# Robots.txt for TMEB Consulting
+# https://tmeb.com.br
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tmeb.com.br/sitemap.xml
+
+# Crawl-delay (optional, for polite crawling)
+Crawl-delay: 1

@@ -441,7 +441,42 @@ html {
     letter-spacing: 0.01em;
 }
 
-.contact-card:hover p {
+.contact-card p {
+    color: var(--text-primary);
+}
+
+/* Contact Links */
+.contact-link {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    display: block;
+}
+
+.contact-link:hover {
+    color: var(--primary-color);
+}
+
+.contact-card:hover .contact-link {
+    color: var(--text-primary);
+}
+
+/* Address styling */
+.contact-card address {
+    font-style: normal;
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    transition: color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+
+.contact-card:hover address {
     color: var(--text-primary);
 }
 
