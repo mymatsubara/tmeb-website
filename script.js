@@ -1,85 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Add parallax effect to hero section
-    const hero = document.querySelector('.hero');
-    const navbar = document.querySelector('.navbar');
-    
-    // Parallax scroll effect - usando requestAnimationFrame para performance
-    let ticking = false;
-    let navTicking = false;
-    
-    function updateNavbarHeight() {
-        if (!navbar) return;
-        const h = Math.ceil(navbar.getBoundingClientRect().height);
-        document.documentElement.style.setProperty('--navbar-height', `${h}px`);
-    }
-
-    function updateOnScroll() {
-        const scrolled = window.pageYOffset;
-        if (hero) {
-            hero.style.transform = `translate3d(0, ${scrolled * 0.3}px, 0)`;
-            hero.style.opacity = 1 - scrolled / 800;
-        }
-        
-        ticking = false;
-    }
-    
-    window.addEventListener(
-        'scroll',
-        () => {
-        if (!ticking) {
-            window.requestAnimationFrame(updateOnScroll);
-            ticking = true;
-        }
-        },
-        { passive: true }
-    );
-
-    updateNavbarHeight();
-    // Recalcula com fontes carregadas (evita “pular” alinhamento)
-    if (document.fonts && typeof document.fonts.ready?.then === 'function') {
-        document.fonts.ready.then(updateNavbarHeight).catch(() => {});
-    }
-    window.addEventListener(
-        'resize',
-        () => {
-            if (!navTicking) {
-                navTicking = true;
-                window.requestAnimationFrame(() => {
-                    updateNavbarHeight();
-                    navTicking = false;
-                });
-            }
-        },
-        { passive: true }
-    );
-
-    // Animate contact cards on scroll
-    const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.style.animationPlayState = 'running';
-            }
-        });
-    }, observerOptions);
-
-    const contactCards = document.querySelectorAll('.contact-card');
-    contactCards.forEach((card) => {
-        observer.observe(card);
-    });
-
-    // Add smooth reveal animation for elements
-    const revealElements = document.querySelectorAll('.contact-title, .contact-card');
-    revealElements.forEach((el) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-    });
-    
-    // Inicializa o fundo generativo (Lumen Weave)
     initLumenWeaveBackground();
 });
 
@@ -105,7 +24,7 @@ function initLumenWeaveBackground() {
         pointerActive: false,
         pointerVX: 0,
         pointerVY: 0,
-        baseHue: 215,
+        baseHue: 28,
         particles: [],
         bursts: []
     };
@@ -118,7 +37,6 @@ function initLumenWeaveBackground() {
         return a + (b - a) * t;
     }
 
-    // Hash determinístico para (i, j) -> [0, 1)
     function hash2(i, j) {
         let n = (i * 374761393 + j * 668265263) | 0;
         n = (n ^ (n >>> 13)) | 0;
@@ -128,7 +46,6 @@ function initLumenWeaveBackground() {
     }
 
     function fade(t) {
-        // 6t^5 - 15t^4 + 10t^3
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
 
@@ -164,7 +81,6 @@ function initLumenWeaveBackground() {
     }
 
     function curl2(x, y) {
-        // Derivadas numéricas do fbm
         const e = 0.015;
         const n1 = fbm2(x + e, y);
         const n2 = fbm2(x - e, y);
@@ -174,7 +90,6 @@ function initLumenWeaveBackground() {
         const n4 = fbm2(x, y - e);
         const b = (n3 - n4) / (2 * e);
 
-        // Campo sem divergência (rotaciona gradiente)
         let vx = b;
         let vy = -a;
         const m = Math.hypot(vx, vy) || 1;
@@ -193,7 +108,7 @@ function initLumenWeaveBackground() {
                 py: 0,
                 vx: (Math.random() - 0.5) * 0.2,
                 vy: (Math.random() - 0.5) * 0.2,
-                hue: (Math.random() * 160) - 80,
+                hue: (Math.random() * 25) - 12,
                 life: Math.random() * 1.0
             };
             arr[i].px = arr[i].x;
@@ -217,13 +132,12 @@ function initLumenWeaveBackground() {
         ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 
         const area = cssW * cssH;
-        const base = Math.floor(area / (reduceMotion ? 9000 : 4500));
-        const count = clamp(base, reduceMotion ? 220 : 700, reduceMotion ? 420 : 1600);
+        const base = Math.floor(area / (reduceMotion ? 8000 : 4000));
+        const count = clamp(base, reduceMotion ? 250 : 800, reduceMotion ? 500 : 1800);
         state.particles = makeParticles(count);
 
-        // Limpa com um “preto” suave
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(10, 10, 15, 1)';
+        ctx.fillStyle = 'rgba(8, 8, 10, 1)';
         ctx.fillRect(0, 0, state.w, state.h);
     }
 
@@ -236,7 +150,7 @@ function initLumenWeaveBackground() {
     }
 
     function burst(x, y) {
-        const hue = (state.baseHue + 40 + Math.random() * 80) % 360;
+        const hue = (state.baseHue + 5 + Math.random() * 15) % 360;
         state.bursts.push({
             x,
             y,
@@ -244,7 +158,7 @@ function initLumenWeaveBackground() {
             hue,
             life: 1
         });
-        if (state.bursts.length > 6) state.bursts.shift();
+        if (state.bursts.length > 5) state.bursts.shift();
     }
 
     function drawBursts(dt) {
@@ -252,7 +166,7 @@ function initLumenWeaveBackground() {
         for (let i = state.bursts.length - 1; i >= 0; i--) {
             const b = state.bursts[i];
             b.life -= dt * 1.2;
-            b.r += dt * state.minDim * 0.9;
+            b.r += dt * state.minDim * 0.8;
             if (b.life <= 0) {
                 state.bursts.splice(i, 1);
                 continue;
@@ -260,8 +174,8 @@ function initLumenWeaveBackground() {
 
             const alpha = b.life * 0.22;
             const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-            g.addColorStop(0, `hsla(${b.hue}, 95%, 70%, ${alpha})`);
-            g.addColorStop(0.35, `hsla(${b.hue + 30}, 95%, 60%, ${alpha * 0.6})`);
+            g.addColorStop(0, `hsla(${b.hue}, 55%, 65%, ${alpha})`);
+            g.addColorStop(0.4, `hsla(${b.hue + 8}, 50%, 55%, ${alpha * 0.5})`);
             g.addColorStop(1, 'rgba(0,0,0,0)');
 
             ctx.globalCompositeOperation = 'lighter';
@@ -274,7 +188,7 @@ function initLumenWeaveBackground() {
 
     function drawGrain(amount) {
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.018)';
+        ctx.fillStyle = 'rgba(212, 165, 116, 0.015)';
         for (let i = 0; i < amount; i++) {
             const x = Math.random() * state.w;
             const y = Math.random() * state.h;
@@ -295,26 +209,25 @@ function initLumenWeaveBackground() {
         const dt = state.tLast ? Math.min(0.033, (ts - state.tLast) / 1000) : 1 / fpsCap;
         state.tLast = ts;
 
-        // Fundo “trailing”
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = reduceMotion ? 'rgba(10, 10, 15, 0.28)' : 'rgba(10, 10, 15, 0.085)';
+        ctx.fillStyle = reduceMotion ? 'rgba(8, 8, 10, 0.22)' : 'rgba(8, 8, 10, 0.055)';
         ctx.fillRect(0, 0, state.w, state.h);
 
-        const t = ts * 0.00008;
-        state.baseHue = (215 + ts * 0.003) % 360;
+        const t = ts * 0.00005;
+        state.baseHue = 28 + Math.sin(ts * 0.00008) * 6;
 
-        const fieldScale = 2.2;
-        const fieldStrength = reduceMotion ? 0.42 : 0.7;
+        const fieldScale = 1.8;
+        const fieldStrength = reduceMotion ? 0.45 : 0.7;
         const friction = reduceMotion ? 0.88 : 0.84;
-        const speed = reduceMotion ? 0.75 : 1.15;
+        const speed = reduceMotion ? 0.75 : 1.1;
 
-        const radius = state.minDim * 0.32;
+        const radius = state.minDim * 0.3;
         const swirl = 0.55 * clamp((Math.hypot(state.pointerVX, state.pointerVY) / 1400), 0, 1);
 
         ctx.globalCompositeOperation = 'lighter';
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.lineWidth = reduceMotion ? 1.0 : 1.15;
+        ctx.lineWidth = reduceMotion ? 1.0 : 1.2;
 
         for (let i = 0; i < state.particles.length; i++) {
             const p = state.particles[i];
@@ -323,7 +236,7 @@ function initLumenWeaveBackground() {
 
             const sx = (p.x - state.w * 0.5) / state.minDim;
             const sy = (p.y - state.h * 0.5) / state.minDim;
-            const c = curl2(sx * fieldScale + t, sy * fieldScale - t * 0.9);
+            const c = curl2(sx * fieldScale + t, sy * fieldScale - t * 0.7);
 
             p.vx = p.vx * friction + c.vx * fieldStrength;
             p.vy = p.vy * friction + c.vy * fieldStrength;
@@ -334,7 +247,6 @@ function initLumenWeaveBackground() {
                 const dist = Math.hypot(dx, dy) + 0.001;
                 const k = clamp(1 - dist / radius, 0, 1);
                 if (k > 0) {
-                    // “lente gravitacional”: puxa e faz girar perto do cursor
                     const ax = (-dx / dist) * (0.22 * k);
                     const ay = (-dy / dist) * (0.22 * k);
                     const tx = (-dy / dist) * (0.35 * k * (0.35 + swirl));
@@ -347,7 +259,6 @@ function initLumenWeaveBackground() {
             p.x += p.vx * (speed * 60 * dt);
             p.y += p.vy * (speed * 60 * dt);
 
-            // Reposiciona suavemente se sair da tela
             const m = 40;
             if (p.x < -m || p.x > state.w + m || p.y < -m || p.y > state.h + m) {
                 p.x = Math.random() * state.w;
@@ -360,12 +271,14 @@ function initLumenWeaveBackground() {
                 continue;
             }
 
-            p.life = clamp(p.life + dt * 0.35, 0, 1);
+            p.life = clamp(p.life + dt * 0.4, 0, 1);
 
             const vMag = Math.hypot(p.vx, p.vy);
-            const hue = (state.baseHue + p.hue + vMag * 18) % 360;
-            const alpha = (reduceMotion ? 0.22 : 0.18) * p.life;
-            ctx.strokeStyle = `hsla(${hue}, 92%, 66%, ${alpha})`;
+            const hue = (state.baseHue + p.hue + vMag * 6) % 360;
+            const sat = 45 + vMag * 12;
+            const light = 58 + vMag * 8;
+            const alpha = (reduceMotion ? 0.28 : 0.22) * p.life;
+            ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
 
             ctx.beginPath();
             ctx.moveTo(p.px, p.py);
@@ -374,7 +287,7 @@ function initLumenWeaveBackground() {
         }
 
         drawBursts(dt);
-        drawGrain(reduceMotion ? 35 : 120);
+        drawGrain(reduceMotion ? 40 : 140);
 
         requestAnimationFrame(tick);
     }
@@ -388,7 +301,6 @@ function initLumenWeaveBackground() {
         }
     }
 
-    // Eventos
     let lastPX = 0;
     let lastPY = 0;
     let lastPT = 0;
