@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia</title>
+    <meta name="theme-color" content="#f8f5f0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="v3-organic.css">
+</head>
+
+<body>
+    <div class="background-animation">
+        <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+        <div class="bg-gradient"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-leaf">
+                    <svg viewBox="0 0 40 40" fill="none">
+                        <path d="M20 5C12 15 8 25 20 35C32 25 28 15 20 5Z" fill="currentColor" opacity="0.3"/>
+                        <path d="M20 8C14 16 11 24 20 32" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    </svg>
+                </div>
+                <div class="logo-text-container">
+                    <span class="logo-text">tmeb</span>
+                    <span class="logo-subtitle">consulting</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-eyebrow">Consultoria de Tecnologia</div>
+                <h1 class="hero-title">
+                    <span class="title-line">Soluções que</span>
+                    <span class="title-line"><em>crescem</em> com</span>
+                    <span class="title-line">sua empresa</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Transformamos desafios tecnológicos em caminhos<br>
+                    claros para o sucesso do seu negócio
+                </p>
+                <div class="hero-scroll">
+                    <span class="scroll-text">Conheça mais</span>
+                    <div class="scroll-line"></div>
+                </div>
+            </div>
+            <div class="hero-blob"></div>
+        </section>
+
+        <section class="contact-section">
+            <div class="contact-container">
+                <div class="section-intro">
+                    <span class="section-label">Contato</span>
+                    <h2 class="section-title">Vamos <em>conversar</em>?</h2>
+                    <p class="section-desc">Estamos aqui para ajudar sua empresa a florescer no mundo digital.</p>
+                </div>
+                <div class="contact-grid">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-card">
+                        <div class="card-blob"></div>
+                        <div class="card-content">
+                            <span class="card-label">Email</span>
+                            <span class="card-value">bruno.patriarca@tmeb.com.br</span>
+                        </div>
+                        <div class="card-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-card">
+                        <div class="card-blob"></div>
+                        <div class="card-content">
+                            <span class="card-label">Telefone</span>
+                            <span class="card-value">+55 (11) 91487-2685</span>
+                        </div>
+                        <div class="card-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                            </svg>
+                        </div>
+                    </a>
+                    <div class="contact-card no-hover">
+                        <div class="card-blob"></div>
+                        <div class="card-content">
+                            <span class="card-label">Localização</span>
+                            <span class="card-value">São Paulo, Brasil</span>
+                        </div>
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="10" r="3"/>
+                                <path d="M12 21.5C16 17 19 13 19 10a7 7 0 10-14 0c0 3 3 7 7 11.5z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path d="M0,50 C360,100 720,0 1080,50 C1260,75 1380,25 1440,50 L1440,100 L0,100 Z" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="footer-content">
+            <p>© 2026 TMEB Consulting · Cultivando soluções tecnológicas</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('bg-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        let w, h;
+        const particles = [];
+        const particleCount = 40;
+
+        const colors = ['#7c9885', '#b4c4ae', '#d4a574', '#e8dcc4'];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            particles.length = 0;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: 3 + Math.random() * 8,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    wobble: Math.random() * Math.PI * 2,
+                    wobbleSpeed: 0.01 + Math.random() * 0.02
+                });
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(248, 245, 240, 0.03)';
+            ctx.fillRect(0, 0, w, h);
+
+            particles.forEach(p => {
+                p.wobble += p.wobbleSpeed;
+                p.x += p.speedX + Math.sin(p.wobble) * 0.3;
+                p.y += p.speedY + Math.cos(p.wobble) * 0.2;
+
+                // Wrap around
+                if (p.x < -20) p.x = w + 20;
+                if (p.x > w + 20) p.x = -20;
+                if (p.y < -20) p.y = h + 20;
+                if (p.y > h + 20) p.y = -20;
+
+                // Organic blob shape
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.wobble);
+
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.15;
+                ctx.beginPath();
+
+                // Create organic shape
+                const points = 6;
+                for (let i = 0; i <= points; i++) {
+                    const angle = (i / points) * Math.PI * 2;
+                    const radius = p.size * (0.8 + Math.sin(angle * 3 + p.wobble) * 0.2);
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        draw();
+    });
+    </script>
+</body>
+
+</html>

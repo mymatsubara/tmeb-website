@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia</title>
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="v2-synthwave.css">
+</head>
+
+<body>
+    <div class="background-animation">
+        <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+        <div class="grid-overlay"></div>
+        <div class="scanlines"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <div class="logo-triangle"></div>
+                </div>
+                <div class="logo-text-container">
+                    <span class="logo-text">TMEB</span>
+                    <span class="logo-subtitle">CONSULTING</span>
+                </div>
+            </div>
+            <div class="nav-status">
+                <span class="status-dot"></span>
+                <span class="status-text">ONLINE</span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-icon">◆</span>
+                    <span>TECNOLOGIA DO FUTURO</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="title-line">Consultoria</span>
+                    <span class="title-line">de <span class="neon-text">Tecnologia</span></span>
+                    <span class="title-line small">para Empresas</span>
+                </h1>
+                <p class="hero-subtitle">
+                    <span class="typing-text">Transformando desafios em soluções estratégicas</span>
+                    <span class="cursor">_</span>
+                </p>
+                <div class="hero-cta">
+                    <a href="#contact" class="btn-primary">
+                        <span class="btn-text">INICIAR CONEXÃO</span>
+                        <span class="btn-icon">▶</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-decoration">
+                <div class="deco-circle"></div>
+                <div class="deco-lines">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="contact-container">
+                <div class="section-header">
+                    <div class="header-line"></div>
+                    <h2 class="section-title">ESTABELECER CONTATO</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="contact-grid">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-card">
+                        <div class="card-glow"></div>
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3>EMAIL</h3>
+                        <p>bruno.patriarca@tmeb.com.br</p>
+                        <div class="card-corner"></div>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-card">
+                        <div class="card-glow"></div>
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                            </svg>
+                        </div>
+                        <h3>TELEFONE</h3>
+                        <p>+55 (11) 91487-2685</p>
+                        <div class="card-corner"></div>
+                    </a>
+                    <div class="contact-card">
+                        <div class="card-glow"></div>
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                        </div>
+                        <h3>LOCALIZAÇÃO</h3>
+                        <p>São Paulo, Brasil</p>
+                        <div class="card-corner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid"></div>
+        <p>© 2026 TMEB CONSULTING // TODOS OS DIREITOS RESERVADOS</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('bg-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        let w, h;
+        const particles = [];
+        const particleCount = 60;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            particles.length = 0;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: 1 + Math.random() * 2,
+                    speedY: 0.5 + Math.random() * 1,
+                    hue: Math.random() > 0.5 ? 300 : 180 // Magenta or cyan
+                });
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 26, 0.1)';
+            ctx.fillRect(0, 0, w, h);
+
+            particles.forEach(p => {
+                p.y += p.speedY;
+                if (p.y > h) {
+                    p.y = 0;
+                    p.x = Math.random() * w;
+                }
+
+                // Draw glow
+                const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
+                gradient.addColorStop(0, `hsla(${p.hue}, 100%, 60%, 0.8)`);
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw particle
+                ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, 1)`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        draw();
+    });
+    </script>
+</body>
+
+</html>

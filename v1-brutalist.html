@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia</title>
+    <meta name="theme-color" content="#000000">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="v1-brutalist.css">
+</head>
+
+<body>
+    <div class="background-animation">
+        <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+    </div>
+
+    <div class="frame">
+        <div class="frame-corner frame-tl"></div>
+        <div class="frame-corner frame-tr"></div>
+        <div class="frame-corner frame-bl"></div>
+        <div class="frame-corner frame-br"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-text">TMEB</span>
+                <span class="logo-divider">/</span>
+                <span class="logo-subtitle">CONSULTING</span>
+            </div>
+            <div class="nav-year">©2026</div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-label">CONSULTORIA DE TECNOLOGIA</div>
+                <h1 class="hero-title">
+                    <span class="title-word">TRANS</span>
+                    <span class="title-word">FOR</span>
+                    <span class="title-word accent">MAÇÃO</span>
+                </h1>
+                <p class="hero-subtitle">Desafios tecnológicos → Soluções estratégicas</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">SP</span>
+                        <span class="stat-label">BRASIL</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">SUPORTE</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="contact-container">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <h2 class="section-title">CONTATO</h2>
+                </div>
+                <div class="contact-grid">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-item">
+                        <span class="contact-label">EMAIL</span>
+                        <span class="contact-value">bruno.patriarca@tmeb.com.br</span>
+                        <span class="contact-arrow">→</span>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-item">
+                        <span class="contact-label">TEL</span>
+                        <span class="contact-value">+55 (11) 91487-2685</span>
+                        <span class="contact-arrow">→</span>
+                    </a>
+                    <div class="contact-item">
+                        <span class="contact-label">LOC</span>
+                        <span class="contact-value">São Paulo, Brasil</span>
+                        <span class="contact-arrow">◈</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>TMEB CONSULTING — TODOS OS DIREITOS RESERVADOS</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('bg-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        let w, h;
+        const lines = [];
+        const lineCount = 25;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            lines.length = 0;
+            for (let i = 0; i < lineCount; i++) {
+                lines.push({
+                    y: Math.random() * h,
+                    speed: 0.3 + Math.random() * 0.7,
+                    opacity: 0.02 + Math.random() * 0.04
+                });
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, w, h);
+
+            lines.forEach(line => {
+                line.y += line.speed;
+                if (line.y > h) {
+                    line.y = 0;
+                    line.speed = 0.3 + Math.random() * 0.7;
+                }
+
+                ctx.strokeStyle = `rgba(255, 255, 255, ${line.opacity})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, line.y);
+                ctx.lineTo(w, line.y);
+                ctx.stroke();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        draw();
+    });
+    </script>
+</body>
+
+</html>

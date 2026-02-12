@@ -105,7 +105,7 @@ function initLumenWeaveBackground() {
         pointerActive: false,
         pointerVX: 0,
         pointerVY: 0,
-        baseHue: 215,
+        baseHue: 35, // Warm amber/gold hue
         particles: [],
         bursts: []
     };
@@ -221,9 +221,9 @@ function initLumenWeaveBackground() {
         const count = clamp(base, reduceMotion ? 220 : 700, reduceMotion ? 420 : 1600);
         state.particles = makeParticles(count);
 
-        // Limpa com um “preto” suave
+        // Limpa com um "preto" suave (warm dark)
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(10, 10, 15, 1)';
+        ctx.fillStyle = 'rgba(12, 11, 10, 1)';
         ctx.fillRect(0, 0, state.w, state.h);
     }
 
@@ -236,7 +236,7 @@ function initLumenWeaveBackground() {
     }
 
     function burst(x, y) {
-        const hue = (state.baseHue + 40 + Math.random() * 80) % 360;
+        const hue = 30 + Math.random() * 25; // Warm amber burst
         state.bursts.push({
             x,
             y,
@@ -260,8 +260,8 @@ function initLumenWeaveBackground() {
 
             const alpha = b.life * 0.22;
             const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-            g.addColorStop(0, `hsla(${b.hue}, 95%, 70%, ${alpha})`);
-            g.addColorStop(0.35, `hsla(${b.hue + 30}, 95%, 60%, ${alpha * 0.6})`);
+            g.addColorStop(0, `hsla(${b.hue}, 65%, 65%, ${alpha})`);
+            g.addColorStop(0.35, `hsla(${b.hue + 10}, 55%, 55%, ${alpha * 0.6})`);
             g.addColorStop(1, 'rgba(0,0,0,0)');
 
             ctx.globalCompositeOperation = 'lighter';
@@ -274,7 +274,8 @@ function initLumenWeaveBackground() {
 
     function drawGrain(amount) {
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.018)';
+        // Warm-tinted grain
+        ctx.fillStyle = 'rgba(245, 235, 220, 0.015)';
         for (let i = 0; i < amount; i++) {
             const x = Math.random() * state.w;
             const y = Math.random() * state.h;
@@ -295,13 +296,14 @@ function initLumenWeaveBackground() {
         const dt = state.tLast ? Math.min(0.033, (ts - state.tLast) / 1000) : 1 / fpsCap;
         state.tLast = ts;
 
-        // Fundo “trailing”
+        // Fundo "trailing" - warm dark background
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = reduceMotion ? 'rgba(10, 10, 15, 0.28)' : 'rgba(10, 10, 15, 0.085)';
+        ctx.fillStyle = reduceMotion ? 'rgba(12, 11, 10, 0.28)' : 'rgba(12, 11, 10, 0.085)';
         ctx.fillRect(0, 0, state.w, state.h);
 
         const t = ts * 0.00008;
-        state.baseHue = (215 + ts * 0.003) % 360;
+        // Warm amber range: oscillate between 25-45 (golden tones)
+        state.baseHue = 35 + Math.sin(ts * 0.0002) * 10;
 
         const fieldScale = 2.2;
         const fieldStrength = reduceMotion ? 0.42 : 0.7;
@@ -363,9 +365,12 @@ function initLumenWeaveBackground() {
             p.life = clamp(p.life + dt * 0.35, 0, 1);
 
             const vMag = Math.hypot(p.vx, p.vy);
-            const hue = (state.baseHue + p.hue + vMag * 18) % 360;
-            const alpha = (reduceMotion ? 0.22 : 0.18) * p.life;
-            ctx.strokeStyle = `hsla(${hue}, 92%, 66%, ${alpha})`;
+            // Warm amber/gold palette with subtle variation
+            const hue = state.baseHue + (p.hue * 0.15) + vMag * 5;
+            const sat = 55 + vMag * 8; // More saturated when moving fast
+            const light = 58 + vMag * 6;
+            const alpha = (reduceMotion ? 0.25 : 0.2) * p.life;
+            ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
 
             ctx.beginPath();
             ctx.moveTo(p.px, p.py);
