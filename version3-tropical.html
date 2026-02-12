@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia em São Paulo</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TMEB Consulting - Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas para o seu negócio.">
+    <meta name="keywords" content="consultoria tecnologia, consultoria TI, tecnologia empresas, transformação digital, soluções tecnológicas, São Paulo, TMEB">
+    <meta name="author" content="TMEB Consulting">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tmeb.com.br/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tmeb.com.br/">
+    <meta property="og:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta property="og:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta property="og:image" content="https://tmeb.com.br/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="TMEB Consulting">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tmeb.com.br/">
+    <meta name="twitter:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta name="twitter:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta name="twitter:image" content="https://tmeb.com.br/og-image.jpg">
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#c75d3a">
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="São Paulo">
+
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "TMEB Consulting",
+        "description": "Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas.",
+        "url": "https://tmeb.com.br",
+        "logo": "https://tmeb.com.br/logo.png",
+        "image": "https://tmeb.com.br/og-image.jpg",
+        "telephone": "+55-11-91487-2685",
+        "email": "bruno.patriarca@tmeb.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Brasil"
+        },
+        "serviceType": ["Consultoria de Tecnologia", "Transformação Digital", "Soluções Tecnológicas"],
+        "priceRange": "$$",
+        "sameAs": []
+    }
+    </script>
+
+    <!-- Structured Data - WebSite -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TMEB Consulting",
+        "url": "https://tmeb.com.br",
+        "description": "Consultoria de Tecnologia para Empresas",
+        "publisher": {
+            "@type": "Organization",
+            "name": "TMEB Consulting"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --terracotta: #c75d3a;
+            --terracotta-light: #e07b5c;
+            --sand: #f4ede4;
+            --cream: #faf7f2;
+            --forest: #2d5a47;
+            --forest-light: #4a7c66;
+            --charcoal: #1f1f1f;
+            --warm-gray: #8a8279;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Organic Shapes Background */
+        .organic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--terracotta);
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--forest);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -7s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--terracotta-light);
+            top: 50%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--terracotta);
+            border-radius: 50% 50% 50% 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cream);
+            font-family: 'Fraunces', serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .nav-cta {
+            background: var(--charcoal);
+            color: var(--cream);
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--terracotta);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-content {
+            opacity: 0;
+            animation: slideIn 1s ease 0.2s forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--sand);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--terracotta);
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--terracotta);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-weight: 500;
+            line-height: 1.15;
+            margin-bottom: 30px;
+        }
+
+        .hero-title .highlight {
+            color: var(--terracotta);
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--warm-gray);
+            line-height: 1.7;
+            margin-bottom: 40px;
+            max-width: 450px;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--terracotta);
+            color: var(--cream);
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--terracotta-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(199, 93, 58, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--charcoal);
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 2px solid var(--charcoal);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--charcoal);
+            color: var(--cream);
+        }
+
+        /* Curved Shape */
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: slideIn 1s ease 0.5s forwards;
+        }
+
+        .curved-shape {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--terracotta) 0%, var(--forest) 100%);
+            border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: morph 10s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .curved-shape::before {
+            content: '';
+            position: absolute;
+            inset: 20px;
+            background: var(--cream);
+            border-radius: 50% 60% 40% 70% / 60% 40% 70% 50%;
+            animation: morph 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+            25% { border-radius: 50% 50% 40% 60% / 40% 50% 60% 50%; }
+            50% { border-radius: 40% 60% 50% 50% / 60% 40% 50% 60%; }
+            75% { border-radius: 70% 30% 60% 40% / 50% 70% 30% 60%; }
+        }
+
+        .shape-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .shape-text h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+
+        .shape-text p {
+            font-size: 0.9rem;
+            color: var(--warm-gray);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 120px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .services-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 3rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .service-card {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--terracotta);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--sand);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-family: 'Fraunces', serif;
+            font-size: 1.8rem;
+            color: var(--terracotta);
+        }
+
+        .service-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: var(--warm-gray);
+            line-height: 1.7;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 120px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--forest);
+            border-radius: 50px;
+            padding: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: var(--forest-light);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        .contact-left {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-left h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--cream);
+            margin-bottom: 20px;
+        }
+
+        .contact-left p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.7;
+        }
+
+        .contact-right {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 25px 30px;
+            border-radius: 20px;
+            color: var(--cream);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(10px);
+        }
+
+        .contact-item-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--terracotta);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-item-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--cream);
+        }
+
+        .contact-item-content span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .contact-item-content strong {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .contact-item address {
+            font-style: normal;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            color: var(--warm-gray);
+            font-size: 0.85rem;
+        }
+
+        .footer-logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.2rem;
+            color: var(--charcoal);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-cta-group {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+                padding: 50px 40px;
+                border-radius: 30px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 20px 25px;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .hero, .services, .contact {
+                padding: 80px 25px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .contact-container {
+                padding: 40px 25px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="organic-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">T</div>
+            <span class="logo-text">TMEB</span>
+        </div>
+        <a href="#contact" class="nav-cta">Fale Conosco</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge">Consultoria de Tecnologia</div>
+                    <h1 class="hero-title">Soluções <span class="highlight">estratégicas</span> para desafios tecnológicos</h1>
+                    <p class="hero-subtitle">Transformamos a tecnologia da sua empresa com expertise, inovação e uma abordagem genuinamente brasileira.</p>
+                    <div class="hero-cta-group">
+                        <a href="#contact" class="btn-primary">
+                            Comece Agora
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        <a href="#services" class="btn-secondary">Nossos Serviços</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="curved-shape">
+                        <div class="shape-text">
+                            <h2>São Paulo</h2>
+                            <p>Brasil</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="services" id="services">
+            <div class="services-header">
+                <h2>Nossos Serviços</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">01</div>
+                    <h3>Transformação Digital</h3>
+                    <p>Modernização completa de processos e sistemas para levar sua empresa ao próximo nível.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">02</div>
+                    <h3>Arquitetura de Sistemas</h3>
+                    <p>Desenho e implementação de soluções escaláveis, robustas e preparadas para o futuro.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">03</div>
+                    <h3>Estratégia Tech</h3>
+                    <p>Planejamento tecnológico alinhado aos objetivos e à visão de longo prazo do seu negócio.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="contact-container">
+                <div class="contact-left">
+                    <h2>Vamos construir algo incrível juntos?</h2>
+                    <p>Estamos prontos para ouvir sobre seus desafios e criar soluções sob medida para sua empresa.</p>
+                </div>
+                <div class="contact-right">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-item" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-content">
+                            <span>Email</span>
+                            <strong itemprop="email">bruno.patriarca@tmeb.com.br</strong>
+                        </div>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-item" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-content">
+                            <span>Telefone</span>
+                            <strong itemprop="telephone">+55 (11) 91487-2685</strong>
+                        </div>
+                    </a>
+                    <div class="contact-item" itemscope itemtype="https://schema.org/PostalAddress">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="contact-item-content">
+                            <span>Localização</span>
+                            <address><strong itemprop="addressLocality">São Paulo, Brasil</strong></address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TMEB Consulting. Todos os direitos reservados.</p>
+        <span class="footer-logo">TMEB</span>
+    </footer>
+</body>
+
+</html>

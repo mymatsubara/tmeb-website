@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia em São Paulo</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TMEB Consulting - Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas para o seu negócio.">
+    <meta name="keywords" content="consultoria tecnologia, consultoria TI, tecnologia empresas, transformação digital, soluções tecnológicas, São Paulo, TMEB">
+    <meta name="author" content="TMEB Consulting">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tmeb.com.br/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tmeb.com.br/">
+    <meta property="og:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta property="og:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta property="og:image" content="https://tmeb.com.br/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="TMEB Consulting">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tmeb.com.br/">
+    <meta name="twitter:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta name="twitter:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta name="twitter:image" content="https://tmeb.com.br/og-image.jpg">
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#f8f5ff">
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="São Paulo">
+
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "TMEB Consulting",
+        "description": "Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas.",
+        "url": "https://tmeb.com.br",
+        "logo": "https://tmeb.com.br/logo.png",
+        "image": "https://tmeb.com.br/og-image.jpg",
+        "telephone": "+55-11-91487-2685",
+        "email": "bruno.patriarca@tmeb.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Brasil"
+        },
+        "serviceType": ["Consultoria de Tecnologia", "Transformação Digital", "Soluções Tecnológicas"],
+        "priceRange": "$$",
+        "sameAs": []
+    }
+    </script>
+
+    <!-- Structured Data - WebSite -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TMEB Consulting",
+        "url": "https://tmeb.com.br",
+        "description": "Consultoria de Tecnologia para Empresas",
+        "publisher": {
+            "@type": "Organization",
+            "name": "TMEB Consulting"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f8f5ff;
+            --lavender: #e8e0f0;
+            --lavender-dark: #c4b5dc;
+            --mint: #c8f0e8;
+            --mint-dark: #7dd3c0;
+            --blush: #ffe4e8;
+            --blush-dark: #f8b4c0;
+            --purple: #8b7bc7;
+            --purple-dark: #6b5aa8;
+            --text: #2d2a3e;
+            --text-light: #6b6880;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background: var(--lavender-dark);
+            color: var(--white);
+        }
+
+        /* Floating Shapes Background */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--lavender), var(--blush));
+            top: -150px;
+            left: -100px;
+            animation: float1 25s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--mint), var(--lavender));
+            bottom: -100px;
+            right: -100px;
+            animation: float2 20s ease-in-out infinite;
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--blush), var(--mint));
+            top: 40%;
+            right: 20%;
+            animation: float3 22s ease-in-out infinite;
+        }
+
+        .shape-4 {
+            width: 200px;
+            height: 200px;
+            background: var(--lavender);
+            bottom: 30%;
+            left: 10%;
+            animation: float1 18s ease-in-out infinite reverse;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(40px, -40px) rotate(5deg); }
+            66% { transform: translate(-30px, 30px) rotate(-5deg); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, -30px) scale(1.1); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(30px, 30px); }
+            50% { transform: translate(-20px, 50px); }
+            75% { transform: translate(-40px, -20px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-bubble {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 24px rgba(139, 123, 199, 0.3);
+        }
+
+        .logo-name {
+            font-weight: 600;
+            font-size: 1.4rem;
+            color: var(--text);
+        }
+
+        .nav-cta {
+            background: var(--white);
+            color: var(--purple);
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--purple);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 123, 199, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--purple);
+            font-weight: 500;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .hero-pill svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 30px;
+            animation: fadeUp 0.8s ease 0.2s backwards;
+        }
+
+        .hero-title .gradient {
+            background: linear-gradient(135deg, var(--purple), var(--mint-dark), var(--blush-dark));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientMove 5s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            font-weight: 400;
+            margin-bottom: 50px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeUp 0.8s ease 0.4s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp 0.8s ease 0.6s backwards;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--white);
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 30px rgba(139, 123, 199, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(139, 123, 199, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text);
+            padding: 18px 36px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .features-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .features-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 40px 35px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .feature-card:nth-child(1) .feature-icon {
+            background: linear-gradient(135deg, var(--lavender), var(--blush));
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: linear-gradient(135deg, var(--mint), var(--lavender));
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, var(--blush), var(--mint));
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 100px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 40px;
+            padding: 70px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .contact-icon-big {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--lavender), var(--mint));
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2.5rem;
+        }
+
+        .contact-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .contact-subtitle {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            margin-bottom: 50px;
+        }
+
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .contact-card {
+            background: var(--bg);
+            padding: 30px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            background: linear-gradient(135deg, var(--lavender), var(--mint));
+            transform: scale(1.03);
+        }
+
+        .contact-card-icon {
+            width: 55px;
+            height: 55px;
+            background: var(--white);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .contact-card-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--purple);
+        }
+
+        .contact-card h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--purple);
+            margin-bottom: 8px;
+        }
+
+        .contact-card p,
+        .contact-card address {
+            font-style: normal;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .contact-card:hover p,
+        .contact-card:hover address {
+            color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .footer-hearts {
+            color: var(--blush-dark);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+                margin: 0 auto;
+            }
+
+            .contact-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-container {
+                padding: 50px 35px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 20px 25px;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .hero, .features, .contact {
+                padding: 80px 25px;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-container {
+                padding: 40px 25px;
+                border-radius: 30px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-bubble">T</div>
+            <span class="logo-name">TMEB</span>
+        </div>
+        <a href="#contact" class="nav-cta">Fale Conosco</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    Consultoria de Tecnologia
+                </div>
+                <h1 class="hero-title">
+                    Transformamos desafios em <span class="gradient">soluções estratégicas</span>
+                </h1>
+                <p class="hero-subtitle">Consultoria especializada para empresas que buscam inovação, eficiência e resultados reais em tecnologia.</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn-primary">
+                        Começar Agora
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn-secondary">Saiba Mais</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="features-container">
+                <div class="features-header">
+                    <h2>Nossos Serviços</h2>
+                    <p>Soluções personalizadas para cada desafio</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Transformação Digital</h3>
+                        <p>Modernização completa de processos e sistemas para impulsionar seu negócio na era digital.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏗️</div>
+                        <h3>Arquitetura de Sistemas</h3>
+                        <p>Design e implementação de soluções escaláveis, robustas e prontas para o crescimento.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Estratégia Tech</h3>
+                        <p>Planejamento tecnológico alinhado aos seus objetivos de negócio de longo prazo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="contact-container">
+                <div class="contact-icon-big">💬</div>
+                <h2 class="contact-title">Vamos conversar?</h2>
+                <p class="contact-subtitle">Estamos prontos para ouvir sobre seus desafios e criar soluções sob medida.</p>
+                <div class="contact-cards">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3>Email</h3>
+                        <p itemprop="email">bruno.patriarca@tmeb.com.br</p>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        <h3>Telefone</h3>
+                        <p itemprop="telephone">+55 (11) 91487-2685</p>
+                    </a>
+                    <div class="contact-card" itemscope itemtype="https://schema.org/PostalAddress">
+                        <div class="contact-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <h3>Localização</h3>
+                        <address itemprop="addressLocality">São Paulo, Brasil</address>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TMEB Consulting. Todos os direitos reservados.</p>
+        <span class="footer-hearts">Feito com ♥ em São Paulo</span>
+    </footer>
+</body>
+
+</html>

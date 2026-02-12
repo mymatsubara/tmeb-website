@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia em São Paulo</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TMEB Consulting - Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas para o seu negócio.">
+    <meta name="keywords" content="consultoria tecnologia, consultoria TI, tecnologia empresas, transformação digital, soluções tecnológicas, São Paulo, TMEB">
+    <meta name="author" content="TMEB Consulting">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tmeb.com.br/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tmeb.com.br/">
+    <meta property="og:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta property="og:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta property="og:image" content="https://tmeb.com.br/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="TMEB Consulting">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tmeb.com.br/">
+    <meta name="twitter:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta name="twitter:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta name="twitter:image" content="https://tmeb.com.br/og-image.jpg">
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#0f0f0f">
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="São Paulo">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "TMEB Consulting",
+        "description": "Consultoria especializada em tecnologia para empresas.",
+        "url": "https://tmeb.com.br",
+        "telephone": "+55-11-91487-2685",
+        "email": "bruno.patriarca@tmeb.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --white: #ffffff;
+            --red: #ff0040;
+            --cyan: #00ffff;
+            --yellow: #ffff00;
+            --gray: #333;
+            --gray-light: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Glitch Effect Keyframes */
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 2px); }
+            20% { clip-path: inset(92% 0 1% 0); transform: translate(2px, -2px); }
+            40% { clip-path: inset(43% 0 1% 0); transform: translate(-2px, -2px); }
+            60% { clip-path: inset(25% 0 58% 0); transform: translate(2px, 2px); }
+            80% { clip-path: inset(54% 0 7% 0); transform: translate(-2px, 2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(65% 0 8% 0); transform: translate(2px, -2px); }
+            20% { clip-path: inset(12% 0 69% 0); transform: translate(-2px, 2px); }
+            40% { clip-path: inset(78% 0 5% 0); transform: translate(2px, 2px); }
+            60% { clip-path: inset(32% 0 48% 0); transform: translate(-2px, -2px); }
+            80% { clip-path: inset(5% 0 88% 0); transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-skew {
+            0%, 100% { transform: skew(0deg); }
+            20% { transform: skew(-2deg); }
+            40% { transform: skew(1deg); }
+            60% { transform: skew(-1deg); }
+            80% { transform: skew(2deg); }
+        }
+
+        @keyframes rgb-shift {
+            0%, 100% { text-shadow: -2px 0 var(--red), 2px 0 var(--cyan); }
+            25% { text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
+            50% { text-shadow: -2px 2px var(--red), 2px -2px var(--cyan); }
+            75% { text-shadow: 2px -2px var(--red), -2px 2px var(--cyan); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            position: relative;
+        }
+
+        .logo::before,
+        .logo::after {
+            content: 'TMEB';
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .logo::before {
+            color: var(--red);
+            animation: glitch-1 3s infinite linear;
+            opacity: 0.8;
+        }
+
+        .logo::after {
+            color: var(--cyan);
+            animation: glitch-2 3s infinite linear;
+            opacity: 0.8;
+        }
+
+        .nav-status {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: var(--gray-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 150px 50px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-tag {
+            font-size: 0.75rem;
+            letter-spacing: 0.4em;
+            color: var(--cyan);
+            margin-bottom: 40px;
+            display: inline-block;
+            position: relative;
+        }
+
+        .hero-tag::before {
+            content: '>';
+            margin-right: 10px;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .glitch-title {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -0.02em;
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .glitch-title .line {
+            display: block;
+            position: relative;
+        }
+
+        .glitch-title .line:hover {
+            animation: rgb-shift 0.3s ease infinite, glitch-skew 0.5s ease infinite;
+        }
+
+        .glitch-title .accent {
+            color: transparent;
+            -webkit-text-stroke: 2px var(--white);
+            position: relative;
+        }
+
+        .glitch-title .accent::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: var(--red);
+            -webkit-text-stroke: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+            transform: translate(-4px, -2px);
+            opacity: 0.8;
+        }
+
+        .glitch-title .accent::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: var(--cyan);
+            -webkit-text-stroke: 0;
+            clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+            transform: translate(4px, 2px);
+            opacity: 0.8;
+        }
+
+        .hero-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 40px;
+            border-top: 1px solid var(--gray);
+        }
+
+        .hero-description {
+            max-width: 400px;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--gray-light);
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 40px;
+            background: var(--white);
+            color: var(--bg);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.1s ease;
+            position: relative;
+        }
+
+        .hero-cta:hover {
+            animation: glitch-skew 0.2s ease infinite;
+            box-shadow: -3px 3px var(--red), 3px -3px var(--cyan);
+        }
+
+        /* Distortion Bar */
+        .distortion-bar {
+            height: 100px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--red) 0px,
+                var(--red) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            position: relative;
+            overflow: hidden;
+            opacity: 0.3;
+        }
+
+        .distortion-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--cyan) 0px,
+                var(--cyan) 2px,
+                transparent 2px,
+                transparent 6px
+            );
+            animation: slideBar 2s linear infinite;
+        }
+
+        @keyframes slideBar {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 60px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red), var(--cyan), var(--yellow));
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            padding: 50px 40px;
+            border: 1px solid var(--gray);
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--red), var(--cyan));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .service-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 var(--red), 8px 8px 0 var(--cyan);
+        }
+
+        .service-number {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--gray);
+            line-height: 1;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card h3 {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card p {
+            font-size: 0.8rem;
+            color: var(--gray-light);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 100px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        .contact-title {
+            font-family: 'Darker Grotesque', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .contact-title span {
+            display: block;
+            animation: rgb-shift 4s ease infinite;
+        }
+
+        .contact-subtitle {
+            color: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .contact-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-item {
+            display: block;
+            padding: 25px;
+            border: 1px solid var(--gray);
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .contact-item:hover {
+            background: var(--white);
+            color: var(--bg);
+            transform: translate(-3px, -3px);
+            box-shadow: 3px 3px 0 var(--cyan), 6px 6px 0 var(--red);
+        }
+
+        .contact-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            opacity: 0.5;
+            margin-bottom: 8px;
+        }
+
+        .contact-value {
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 50px;
+            border-top: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--gray-light);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-glitch {
+            animation: rgb-shift 5s ease infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav, .hero, .services, .contact, footer {
+                padding-left: 25px;
+                padding-right: 25px;
+            }
+
+            .glitch-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 30px;
+            }
+
+            .contact-title {
+                font-size: 2.5rem;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise"></div>
+
+    <nav>
+        <div class="logo">TMEB</div>
+        <div class="nav-status">SYS_ERROR: NONE</div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-tag">CONSULTORIA_TECH</div>
+                <h1 class="glitch-title">
+                    <span class="line">CONSULTORIA</span>
+                    <span class="line accent" data-text="TECNOLOGIA">TECNOLOGIA</span>
+                </h1>
+                <div class="hero-bottom">
+                    <p class="hero-description">
+                        Transformamos desafios tecnológicos em soluções estratégicas. Quebramos padrões para criar resultados extraordinários.
+                    </p>
+                    <a href="#contact" class="hero-cta">
+                        CONECTAR
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div class="distortion-bar"></div>
+
+        <section class="services">
+            <h2 class="section-title">SERVIÇOS</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-number">01</div>
+                    <h3>Transformação Digital</h3>
+                    <p>Modernização de processos e sistemas para a nova era.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">02</div>
+                    <h3>Arquitetura de Sistemas</h3>
+                    <p>Soluções escaláveis e de alta performance.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-number">03</div>
+                    <h3>Estratégia Tech</h3>
+                    <p>Planejamento alinhado aos objetivos do negócio.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="contact-container">
+                <div>
+                    <h2 class="contact-title">
+                        <span>ENTRE</span>
+                        <span>EM</span>
+                        <span>CONTATO</span>
+                    </h2>
+                    <p class="contact-subtitle">Vamos criar algo extraordinário juntos.</p>
+                </div>
+                <div class="contact-items">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-item" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-label">// EMAIL</div>
+                        <div class="contact-value" itemprop="email">bruno.patriarca@tmeb.com.br</div>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-item" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-label">// TELEFONE</div>
+                        <div class="contact-value" itemprop="telephone">+55 (11) 91487-2685</div>
+                    </a>
+                    <div class="contact-item" itemscope itemtype="https://schema.org/PostalAddress">
+                        <div class="contact-label">// LOCALIZAÇÃO</div>
+                        <address class="contact-value" itemprop="addressLocality">São Paulo, Brasil</address>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>&copy; 2026 TMEB Consulting</span>
+        <span class="footer-glitch">DATA_STREAM: ACTIVE</span>
+    </footer>
+</body>
+
+</html>

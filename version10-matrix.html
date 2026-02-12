@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia em São Paulo</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TMEB Consulting - Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas para o seu negócio.">
+    <meta name="keywords" content="consultoria tecnologia, consultoria TI, tecnologia empresas, transformação digital, soluções tecnológicas, São Paulo, TMEB">
+    <meta name="author" content="TMEB Consulting">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tmeb.com.br/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tmeb.com.br/">
+    <meta property="og:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta property="og:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta property="og:image" content="https://tmeb.com.br/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="TMEB Consulting">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tmeb.com.br/">
+    <meta name="twitter:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta name="twitter:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta name="twitter:image" content="https://tmeb.com.br/og-image.jpg">
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#000000">
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="São Paulo">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "TMEB Consulting",
+        "description": "Consultoria especializada em tecnologia para empresas.",
+        "url": "https://tmeb.com.br",
+        "telephone": "+55-11-91487-2685",
+        "email": "bruno.patriarca@tmeb.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #000000;
+            --green: #00ff41;
+            --green-dark: #008f11;
+            --green-dim: rgba(0, 255, 65, 0.3);
+            --green-glow: rgba(0, 255, 65, 0.1);
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg);
+            color: var(--green);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--green);
+            color: var(--bg);
+        }
+
+        /* Matrix Rain Canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Overlay Gradient */
+        .matrix-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--bg) 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, var(--bg) 0%, transparent 100%);
+        }
+
+        .logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 20px var(--green), 0 0 40px var(--green-glow);
+        }
+
+        .nav-data {
+            font-size: 0.7rem;
+            color: var(--green-dark);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .data-stream {
+            animation: dataFlicker 0.1s infinite;
+        }
+
+        @keyframes dataFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 50px;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero-code {
+            font-size: 0.75rem;
+            color: var(--green-dark);
+            margin-bottom: 30px;
+            letter-spacing: 0.1em;
+        }
+
+        .hero-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: 0.1em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px var(--green), 0 0 60px var(--green-glow);
+        }
+
+        .hero-title span {
+            display: block;
+        }
+
+        .hero-title .sub {
+            font-size: 0.4em;
+            letter-spacing: 0.3em;
+            color: var(--green-dark);
+            text-shadow: none;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: var(--green-dim);
+            margin-bottom: 50px;
+            line-height: 1.8;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 50px;
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            text-decoration: none;
+            letter-spacing: 0.2em;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--green);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .hero-cta:hover::before {
+            left: 0;
+        }
+
+        .hero-cta:hover {
+            color: var(--bg);
+            box-shadow: 0 0 40px var(--green-glow), 0 0 80px var(--green-glow);
+        }
+
+        /* Data Panel Section */
+        .data-panel {
+            padding: 100px 50px;
+            position: relative;
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .panel-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            color: var(--green-dark);
+            margin-bottom: 15px;
+        }
+
+        .panel-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-shadow: 0 0 20px var(--green-glow);
+        }
+
+        .services-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .service-row {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 30px;
+            align-items: center;
+            padding: 25px 30px;
+            border: 1px solid var(--green-dark);
+            background: rgba(0, 255, 65, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .service-row:hover {
+            background: rgba(0, 255, 65, 0.08);
+            border-color: var(--green);
+            box-shadow: 0 0 30px var(--green-glow);
+        }
+
+        .service-id {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .service-row:hover .service-id {
+            color: var(--green);
+        }
+
+        .service-info h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .service-info p {
+            font-size: 0.8rem;
+            color: var(--green-dim);
+        }
+
+        .service-status {
+            font-size: 0.7rem;
+            color: var(--green-dark);
+            text-align: right;
+        }
+
+        .service-status::before {
+            content: '●';
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 100px 50px;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--green-glow);
+        }
+
+        .contact-subtitle {
+            font-size: 0.85rem;
+            color: var(--green-dim);
+            margin-bottom: 60px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .contact-card {
+            border: 1px solid var(--green-dark);
+            padding: 35px 25px;
+            text-decoration: none;
+            color: var(--green);
+            transition: all 0.3s ease;
+            position: relative;
+            background: var(--bg);
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--green);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .contact-card:hover {
+            background: rgba(0, 255, 65, 0.05);
+            box-shadow: 0 0 40px var(--green-glow);
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .contact-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--green-dark);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .contact-value {
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 50px;
+            border-top: 1px solid var(--green-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--green-dark);
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-stream {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stream-item {
+            animation: dataFlicker 0.15s infinite;
+        }
+
+        .stream-item:nth-child(2) { animation-delay: 0.05s; }
+        .stream-item:nth-child(3) { animation-delay: 0.1s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav, .hero, .data-panel, .contact, footer {
+                padding-left: 25px;
+                padding-right: 25px;
+            }
+
+            .hero-title {
+                font-size: 4rem;
+            }
+
+            .service-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .service-id {
+                font-size: 1.5rem;
+            }
+
+            .service-status {
+                text-align: left;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .footer-stream {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="matrix-overlay"></div>
+
+    <nav>
+        <div class="logo">TMEB</div>
+        <div class="nav-data">
+            <span class="data-stream">SYS:ACTIVE</span>
+            <span>|</span>
+            <span>SP-BR</span>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-code">&lt;init_protocol: consulting_tech /&gt;</div>
+                <h1 class="hero-title">
+                    <span>TMEB</span>
+                    <span class="sub">CONSULTING</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Transformamos desafios tecnológicos em soluções estratégicas. Decodificamos o futuro da sua empresa.
+                </p>
+                <a href="#contact" class="hero-cta">
+                    CONECTAR
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <section class="data-panel">
+            <div class="panel-header">
+                <div class="panel-label">//MÓDULOS_ATIVOS</div>
+                <h2 class="panel-title">SERVIÇOS</h2>
+            </div>
+            <div class="services-container">
+                <div class="service-row">
+                    <div class="service-id">001</div>
+                    <div class="service-info">
+                        <h3>Transformação Digital</h3>
+                        <p>Modernização de processos e sistemas para a era digital</p>
+                    </div>
+                    <div class="service-status">ONLINE</div>
+                </div>
+                <div class="service-row">
+                    <div class="service-id">002</div>
+                    <div class="service-info">
+                        <h3>Arquitetura de Sistemas</h3>
+                        <p>Design de soluções escaláveis e de alta performance</p>
+                    </div>
+                    <div class="service-status">ONLINE</div>
+                </div>
+                <div class="service-row">
+                    <div class="service-id">003</div>
+                    <div class="service-info">
+                        <h3>Estratégia Tech</h3>
+                        <p>Planejamento tecnológico alinhado ao negócio</p>
+                    </div>
+                    <div class="service-status">ONLINE</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="contact-container">
+                <h2 class="contact-title">ESTABELECER LINK</h2>
+                <p class="contact-subtitle">Canais de comunicação disponíveis para conexão</p>
+                <div class="contact-grid">
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-icon">✉</div>
+                        <div class="contact-label">Email</div>
+                        <div class="contact-value" itemprop="email">bruno.patriarca@tmeb.com.br</div>
+                    </a>
+                    <a href="tel:+5511914872685" class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                        <div class="contact-icon">☎</div>
+                        <div class="contact-label">Telefone</div>
+                        <div class="contact-value" itemprop="telephone">+55 (11) 91487-2685</div>
+                    </a>
+                    <div class="contact-card" itemscope itemtype="https://schema.org/PostalAddress">
+                        <div class="contact-icon">◉</div>
+                        <div class="contact-label">Localização</div>
+                        <address class="contact-value" itemprop="addressLocality">São Paulo, Brasil</address>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>&copy; 2026 TMEB Consulting</span>
+        <div class="footer-stream">
+            <span class="stream-item">STREAM:OK</span>
+            <span class="stream-item">LATENCY:12ms</span>
+            <span class="stream-item">UPTIME:99.9%</span>
+        </div>
+    </footer>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'TMEBCONSULTINGTECNOLOGIA01アイウエオカキクケコサシスセソタチツテト';
+        const charArray = chars.split('');
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px Share Tech Mono';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = charArray[Math.floor(Math.random() * charArray.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                ctx.fillStyle = `rgba(0, 255, 65, ${Math.random() * 0.5 + 0.5})`;
+                ctx.fillText(char, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMEB Consulting - Consultoria de Tecnologia em São Paulo</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="TMEB Consulting - Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas para o seu negócio.">
+    <meta name="keywords" content="consultoria tecnologia, consultoria TI, tecnologia empresas, transformação digital, soluções tecnológicas, São Paulo, TMEB">
+    <meta name="author" content="TMEB Consulting">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tmeb.com.br/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tmeb.com.br/">
+    <meta property="og:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta property="og:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta property="og:image" content="https://tmeb.com.br/og-image.jpg">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="TMEB Consulting">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://tmeb.com.br/">
+    <meta name="twitter:title" content="TMEB Consulting - Consultoria de Tecnologia">
+    <meta name="twitter:description" content="Transformamos desafios tecnológicos em soluções estratégicas para empresas. Consultoria especializada em São Paulo.">
+    <meta name="twitter:image" content="https://tmeb.com.br/og-image.jpg">
+
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#f5f0e8">
+    <meta name="geo.region" content="BR-SP">
+    <meta name="geo.placename" content="São Paulo">
+
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "TMEB Consulting",
+        "description": "Consultoria especializada em tecnologia para empresas. Transformamos desafios tecnológicos em soluções estratégicas.",
+        "url": "https://tmeb.com.br",
+        "logo": "https://tmeb.com.br/logo.png",
+        "image": "https://tmeb.com.br/og-image.jpg",
+        "telephone": "+55-11-91487-2685",
+        "email": "bruno.patriarca@tmeb.com.br",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "São Paulo",
+            "addressRegion": "SP",
+            "addressCountry": "BR"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Brasil"
+        },
+        "serviceType": ["Consultoria de Tecnologia", "Transformação Digital", "Soluções Tecnológicas"],
+        "priceRange": "$$",
+        "sameAs": []
+    }
+    </script>
+
+    <!-- Structured Data - WebSite -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TMEB Consulting",
+        "url": "https://tmeb.com.br",
+        "description": "Consultoria de Tecnologia para Empresas",
+        "publisher": {
+            "@type": "Organization",
+            "name": "TMEB Consulting"
+        }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cream: #f5f0e8;
+            --cream-dark: #e8e0d4;
+            --charcoal: #1a1a1a;
+            --gold: #b8956c;
+            --gold-light: #d4b896;
+            --text: #2c2c2c;
+            --text-light: #6b6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            background: var(--cream);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background: var(--gold);
+            color: var(--cream);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            transition: background 0.4s ease, padding 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: var(--cream);
+            padding: 20px 60px;
+            box-shadow: 0 2px 40px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-main {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 500;
+            letter-spacing: 0.4em;
+            color: var(--charcoal);
+        }
+
+        .logo-sub {
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            color: var(--gold);
+            margin-top: 2px;
+        }
+
+        .nav-contact {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: var(--text-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 60px 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.2s forwards;
+        }
+
+        .hero-eyebrow::before,
+        .hero-eyebrow::after {
+            content: '';
+            width: 60px;
+            height: 1px;
+            background: var(--gold);
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 300;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.4s forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 500px;
+            margin: 0 auto 50px;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.6s forwards;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--charcoal);
+            text-decoration: none;
+            padding: 20px 40px;
+            border: 1px solid var(--charcoal);
+            transition: all 0.4s ease;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.8s forwards;
+        }
+
+        .hero-cta:hover {
+            background: var(--charcoal);
+            color: var(--cream);
+        }
+
+        .hero-cta svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.4s ease;
+        }
+
+        .hero-cta:hover svg {
+            transform: translateX(5px);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 60px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--cream-dark);
+        }
+
+        .divider-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--gold);
+            padding: 0 40px;
+        }
+
+        /* About Section */
+        .about {
+            padding: 120px 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .about-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 300;
+            color: var(--cream-dark);
+            margin-bottom: 30px;
+        }
+
+        .about-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-bottom: 30px;
+        }
+
+        .about-text {
+            font-size: 1rem;
+            color: var(--text-light);
+            line-height: 1.9;
+        }
+
+        .about-right {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .service-item {
+            padding: 40px;
+            background: var(--cream-dark);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .service-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--gold);
+            transition: height 0.4s ease;
+        }
+
+        .service-item:hover::before {
+            height: 100%;
+        }
+
+        .service-item:hover {
+            transform: translateX(10px);
+        }
+
+        .service-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .service-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Quote Section */
+        .quote-section {
+            padding: 120px 60px;
+            background: var(--charcoal);
+            text-align: center;
+        }
+
+        .quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cream);
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.5;
+        }
+
+        .quote-author {
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 120px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .contact-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .contact-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .contact-card {
+            text-align: center;
+            padding: 50px 30px;
+            background: var(--cream-dark);
+            transition: all 0.4s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--gold);
+        }
+
+        .contact-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .contact-card a,
+        .contact-card address {
+            font-style: normal;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: var(--gold);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--cream-dark);
+        }
+
+        footer p {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            letter-spacing: 0.1em;
+        }
+
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--charcoal);
+            letter-spacing: 0.3em;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .about {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .hero {
+                padding: 100px 30px 60px;
+            }
+
+            .about, .contact {
+                padding: 80px 30px;
+            }
+
+            .quote-section {
+                padding: 80px 30px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 30px;
+            }
+        }
+
+        /* Smooth scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="navbar">
+        <div class="logo">
+            <span class="logo-main">TMEB</span>
+            <span class="logo-sub">CONSULTING</span>
+        </div>
+        <div class="nav-contact">SÃO PAULO, BRASIL</div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-eyebrow">Consultoria de Tecnologia</div>
+                <h1 class="hero-title">Transformamos <em>desafios</em> tecnológicos em soluções <em>estratégicas</em></h1>
+                <p class="hero-subtitle">Consultoria especializada para empresas que buscam excelência em tecnologia e inovação.</p>
+                <a href="#contact" class="hero-cta">
+                    Entre em Contato
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">Excelência em cada detalhe</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <section class="about reveal">
+            <div class="about-left">
+                <div class="section-number">01</div>
+                <h2 class="about-title">Parceiros estratégicos na jornada de transformação digital</h2>
+                <p class="about-text">Com anos de experiência no mercado, oferecemos consultoria personalizada que vai além da tecnologia. Entendemos o seu negócio e criamos soluções que geram resultados reais.</p>
+            </div>
+            <div class="about-right">
+                <div class="service-item">
+                    <h3 class="service-title">Transformação Digital</h3>
+                    <p class="service-desc">Modernização completa de processos e sistemas para a nova era.</p>
+                </div>
+                <div class="service-item">
+                    <h3 class="service-title">Arquitetura de Sistemas</h3>
+                    <p class="service-desc">Soluções escaláveis e robustas para o crescimento do seu negócio.</p>
+                </div>
+                <div class="service-item">
+                    <h3 class="service-title">Estratégia Tecnológica</h3>
+                    <p class="service-desc">Planejamento alinhado aos objetivos e visão da empresa.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quote-section reveal">
+            <blockquote class="quote">"A tecnologia por si só não é suficiente. É a tecnologia combinada com as pessoas e processos que cria a verdadeira transformação."</blockquote>
+            <cite class="quote-author">— Filosofia TMEB</cite>
+        </section>
+
+        <section class="contact reveal" id="contact">
+            <div class="contact-header">
+                <h2 class="contact-title">Vamos Conversar</h2>
+                <p class="contact-subtitle">Estamos prontos para ouvir sobre seu próximo desafio</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3>Email</h3>
+                    <a href="mailto:bruno.patriarca@tmeb.com.br" itemprop="email">bruno.patriarca@tmeb.com.br</a>
+                </div>
+                <div class="contact-card" itemscope itemtype="https://schema.org/ContactPoint">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                        </svg>
+                    </div>
+                    <h3>Telefone</h3>
+                    <a href="tel:+5511914872685" itemprop="telephone">+55 (11) 91487-2685</a>
+                </div>
+                <div class="contact-card" itemscope itemtype="https://schema.org/PostalAddress">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>Localização</h3>
+                    <address itemprop="addressLocality">São Paulo, Brasil</address>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TMEB Consulting. Todos os direitos reservados.</p>
+        <span class="footer-brand">TMEB</span>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            reveals.forEach(el => {
+                const top = el.getBoundingClientRect().top;
+                if (top < window.innerHeight - 100) {
+                    el.classList.add('visible');
+                }
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+    </script>
+</body>
+
+</html>
