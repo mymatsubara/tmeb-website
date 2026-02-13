@@ -164,6 +164,18 @@ body {
     animation: fadeIn 1s ease 0.6s forwards;
 }
 
+.hero-description {
+    max-width: 680px;
+    margin: 1.25rem auto 0;
+    font-size: clamp(1rem, 1.9vw, 1.55rem);
+    font-weight: 300;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--text-secondary);
+    opacity: 0;
+    animation: fadeIn 1s ease 0.75s forwards;
+}
+
 .hero-line {
     width: 50px;
     height: 2px;
@@ -172,6 +184,36 @@ body {
     opacity: 0;
     animation: fadeIn 1s ease 0.9s forwards;
     box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.75rem;
+    min-height: 44px;
+    padding: 0.72rem 1.35rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.23em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(8, 8, 10, 0.55);
+    backdrop-filter: blur(2px);
+    transition: color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.05s forwards;
+}
+
+.hero-cta:hover {
+    color: var(--text-primary);
+    border-color: rgba(212, 165, 116, 0.45);
+    background: rgba(212, 165, 116, 0.12);
+    box-shadow: 0 0 18px rgba(212, 165, 116, 0.2);
+    transform: translateY(-1px);
 }
 
 /* Contact Section */
@@ -309,9 +351,22 @@ body {
         font-size: clamp(1.75rem, 8vw, 2.5rem);
     }
 
+    .hero-description {
+        margin-top: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.38;
+    }
+
     .hero-line {
         width: 40px;
         margin-top: 2rem;
+    }
+
+    .hero-cta {
+        margin-top: 1.5rem;
+        padding: 0.7rem 1.2rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
     }
 
     .contact-section {
