@@ -132,8 +132,8 @@ function initLumenWeaveBackground() {
         ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 
         const area = cssW * cssH;
-        const base = Math.floor(area / (reduceMotion ? 8000 : 4000));
-        const count = clamp(base, reduceMotion ? 250 : 800, reduceMotion ? 500 : 1800);
+        const base = Math.floor(area / (reduceMotion ? 9000 : 4800));
+        const count = clamp(base, reduceMotion ? 180 : 520, reduceMotion ? 360 : 1300);
         state.particles = makeParticles(count);
 
         ctx.globalCompositeOperation = 'source-over';
@@ -210,7 +210,7 @@ function initLumenWeaveBackground() {
         state.tLast = ts;
 
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = reduceMotion ? 'rgba(8, 8, 10, 0.22)' : 'rgba(8, 8, 10, 0.055)';
+        ctx.fillStyle = reduceMotion ? 'rgba(8, 8, 10, 0.28)' : 'rgba(8, 8, 10, 0.09)';
         ctx.fillRect(0, 0, state.w, state.h);
 
         const t = ts * 0.00005;
@@ -277,7 +277,7 @@ function initLumenWeaveBackground() {
             const hue = (state.baseHue + p.hue + vMag * 6) % 360;
             const sat = 45 + vMag * 12;
             const light = 58 + vMag * 8;
-            const alpha = (reduceMotion ? 0.28 : 0.22) * p.life;
+            const alpha = (reduceMotion ? 0.2 : 0.16) * p.life;
             ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
 
             ctx.beginPath();
@@ -287,7 +287,7 @@ function initLumenWeaveBackground() {
         }
 
         drawBursts(dt);
-        drawGrain(reduceMotion ? 40 : 140);
+        drawGrain(reduceMotion ? 25 : 80);
 
         requestAnimationFrame(tick);
     }
